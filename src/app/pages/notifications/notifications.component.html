@@ -3,43 +3,52 @@
 
   <div class="filters card">
     <div class="row">
-      <label>Email nhận <input type="text" [(ngModel)]="emailNhan" placeholder="email người nhận" /></label>
-      <label>From <input type="date" [(ngModel)]="from" /></label>
-      <label>To <input type="date" [(ngModel)]="to" /></label>
+      <label>
+        Email nhận
+        <input type="text" [(ngModel)]="emailNhan" placeholder="Nhập email người nhận" />
+      </label>
+      <label>
+        Từ ngày
+        <input type="date" [(ngModel)]="from" />
+      </label>
+      <label>
+        Đến ngày
+        <input type="date" [(ngModel)]="to" />
+      </label>
     </div>
     <div class="actions">
-      <button (click)="onSearch()">Tìm</button>
+      <button class="primary" (click)="onSearch()">🔍 Tìm</button>
       <button class="muted" (click)="clearFilters()">Xóa</button>
     </div>
   </div>
 
-  <div *ngIf="loading">Đang tải...</div>
+  <div *ngIf="loading" class="loading">⏳ Đang tải...</div>
 
   <table class="notifications-table" *ngIf="!loading">
     <thead>
       <tr>
         <th>Ngày gửi</th>
-  <th>Tên nhân viên (đủ ngày làm việc)</th>
-  <th>Email</th>
+        <th>Tên Nhân viên</th>
+        <th>Email người nhận thông báo</th>
         <th>Lý do</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let it of items">
-  <td>{{ it.ngayGui | vnDate:'yyyy-MM-dd HH:mm' }}</td>
+        <td>{{ it.ngayGui | vnDate:'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ it.tenNhanVien || it.nhanVienId }}</td>
         <td>{{ it.emailNhan }}</td>
         <td>{{ it.lyDo }}</td>
       </tr>
       <tr *ngIf="items.length === 0">
-        <td colspan="4">Không có thông báo nào.</td>
+        <td colspan="4" class="empty">Không có thông báo nào.</td>
       </tr>
     </tbody>
   </table>
 
-  <div class="pagination">
-    <button [disabled]="page <= 1" (click)="page = page - 1; load(page)">Prev</button>
+  <div class="pagination" *ngIf="!loading && totalPages > 1">
+    <button [disabled]="page <= 1" (click)="page = page - 1; load(page)">⬅ Trước</button>
     <span>Trang {{ page }} / {{ totalPages || 1 }}</span>
-    <button [disabled]="page >= totalPages" (click)="page = page + 1; load(page)">Next</button>
+    <button [disabled]="page >= totalPages" (click)="page = page + 1; load(page)">Tiếp ➡</button>
   </div>
 </div>

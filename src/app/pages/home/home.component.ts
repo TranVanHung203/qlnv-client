@@ -14,6 +14,13 @@ import { AuthService } from '../../services/auth.service';
 export class HomeComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
+  toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('nav-active');
+    }
+  }
+
   logout() {
     this.auth.logout();
     this.router.navigateByUrl('/login');

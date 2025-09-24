@@ -1,33 +1,151 @@
 .notifications-page {
-  padding: 16px;
+  padding: 20px;
 
-  h2 { margin-bottom: 12px; }
+  h2 {
+    margin-bottom: 16px;
+    font-size: 1.4rem;
+    color: #333;
+  }
 
-  .filters.card {
-    padding: 12px;
-    margin-bottom: 12px;
-    .row { display: flex; gap: 12px; align-items: center; }
-    label { display: flex; flex-direction: column; font-weight: 600; }
-    .actions { margin-top: 8px; display:flex; gap:8px; }
+  .card {
+    background: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 16px;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 0.9rem;
+
+      input {
+        margin-top: 4px;
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: border 0.2s;
+
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+
+      button {
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.2s ease;
+
+        &.primary {
+          background: #007bff;
+          color: white;
+
+          &:hover {
+            background: #0056b3;
+          }
+        }
+
+        &.muted {
+          background: transparent;
+          border: 1px solid #ccc;
+          color: #555;
+
+          &:hover {
+            background: #f8f8f8;
+          }
+        }
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    margin: 20px 0;
   }
 
   .notifications-table {
     width: 100%;
     border-collapse: collapse;
-    thead th { text-align: left; border-bottom: 1px solid #ddd; padding: 8px; }
-    tbody td { padding: 8px; border-bottom: 1px solid #f3f3f3; }
+    margin-top: 10px;
+
+    th, td {
+      border: 1px solid #eee;
+      padding: 10px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f9f9f9;
+      font-weight: 600;
+    }
+
+    tbody tr:hover {
+      background: #f5faff;
+    }
+
+    .empty {
+      text-align: center;
+      font-style: italic;
+      color: #777;
+    }
   }
 
-  .pagination { margin-top: 12px; display:flex; gap:8px; align-items:center; }
+  .pagination {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+
+    button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        background: #f1f1f1;
+      }
+    }
+
+    span {
+      font-weight: 500;
+      color: #333;
+    }
+  }
 }
-.notifications-page { padding: 18px; }
-.card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 6px 18px rgba(8,12,20,0.06); }
-.filters { display:flex; flex-direction:column; gap:8px; align-items:stretch; margin-bottom:12px; }
-.filters .row { display:flex; gap:12px; align-items:flex-end; }
-.filters label { display:flex; flex-direction:column; font-size:0.9rem; flex:1; }
-.filters .actions { display:flex; gap:8px; justify-content:flex-end; }
-.filters button.muted { background:transparent; color:#666; border:1px solid #ddd; }
-.notifications-table { width:100%; border-collapse:collapse; margin-top:10px }
-.notifications-table th, .notifications-table td { border:1px solid #f1f1f1; padding:8px; }
-.notifications-table th { background:#fafafa; text-align:left }
-.pagination { margin-top:8px; }

@@ -1,20 +1,212 @@
-:host{display:block;font-family:Segoe UI, Roboto, Arial, sans-serif;color:#0b2545}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.muted{color:#6b7280}
-.actions{display:flex;gap:12px;align-items:center}
-.search{display:flex;gap:8px}
-.card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 24px rgba(2,6,23,0.06)}
-.small{width:100%;border-collapse:collapse}
-.small th,.small td{border-bottom:1px solid #f3f4f6;padding:12px}
-.name-cell{font-weight:600}
-.input{padding:8px;border-radius:8px;border:1px solid #e6e9ee}
-.field-inline{display:flex;gap:12px}
-.field-error{color:#b91c1c;font-size:0.9rem;margin-top:6px}
-.editor{margin-top:12px}
-.editor-actions{display:flex;gap:8px;margin-top:10px}
-.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center}
-.modal{width:480px;max-width:95%;padding:14px;background:#fff;border-radius:8px}
-.btn{padding:7px 12px;border-radius:8px;border:1px solid transparent;background:#f3f4f6;cursor:pointer}
-.btn.success{background:#0ea5a4;color:#fff}
-.btn.danger{background:#ef4444;color:#fff}
-@media (max-width:720px){.field-inline{flex-direction:column}}
+:host {
+  display: block;
+  font-family: Segoe UI, Roboto, Arial, sans-serif;
+  color: #0b2545;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+
+  h3 {
+    margin: 0;
+  }
+
+  .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  .search {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    border-bottom: 1px solid #f3f4f6;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  th {
+    background: #fafafa;
+    font-weight: 600;
+  }
+
+  tbody tr:hover {
+    background: #f9fcff;
+  }
+
+  .name-cell {
+    font-weight: 600;
+  }
+
+  .actions-cell {
+    display: flex;
+    gap: 6px;
+  }
+
+  .muted {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+  }
+}
+
+.input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #e6e9ee;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: #0ea5a4;
+    box-shadow: 0 0 0 2px rgba(14, 165, 164, 0.2);
+  }
+}
+
+.field-inline {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
+}
+
+.field-error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.editor {
+  margin-top: 16px;
+
+  .editor-title {
+    margin-bottom: 10px;
+  }
+
+  .editor-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modal {
+    width: 460px;
+    max-width: 95%;
+    padding: 16px;
+    background: #fff;
+    border-radius: 10px;
+
+    h4 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .modal-actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  }
+}
+
+.btn {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+
+  &.primary {
+    background: #3b82f6;
+    color: #fff;
+
+    &:hover {
+      background: #2563eb;
+    }
+  }
+
+  &.success {
+    background: #0ea5a4;
+    color: #fff;
+
+    &:hover {
+      background: #0c8b8a;
+    }
+  }
+
+  &.danger {
+    background: #ef4444;
+    color: #fff;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.pager {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .page-info {
+    font-weight: 500;
+    margin: 0 8px;
+  }
+
+  select {
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+}

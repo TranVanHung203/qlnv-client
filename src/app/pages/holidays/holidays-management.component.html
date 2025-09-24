@@ -2,22 +2,27 @@
   <div class="header">
     <div>
       <h3>Quản lý ngày lễ</h3>
-      <div class="muted">Thêm, sửa, xóa và quản lý ngày lễ</div>
+      <div class="muted">Thêm, sửa, xóa và quản lý danh sách ngày lễ</div>
     </div>
     <div class="actions">
       <div class="search">
-        <input class="input" [(ngModel)]="filterName" placeholder="Tìm theo tên ngày lễ" />
-        <button class="btn" (click)="load(1)">Tìm</button>
+        <input class="input" [(ngModel)]="filterName" placeholder="🔎 Tìm theo tên ngày lễ" />
+        <button class="btn primary" (click)="load(1)">Tìm</button>
       </div>
-      <button class="btn success" (click)="startEdit()">Thêm ngày lễ</button>
+      <button class="btn success" (click)="startEdit()">+ Thêm ngày lễ</button>
     </div>
   </div>
 
   <div class="card">
     <div class="table-wrap">
-      <table class="small">
+      <table class="table">
         <thead>
-          <tr><th>Tên</th><th>Bắt đầu</th><th>Kết thúc</th><th style="width:1%"></th></tr>
+          <tr>
+            <th>Tên</th>
+            <th>Bắt đầu</th>
+            <th>Kết thúc</th>
+            <th style="width:1%"></th>
+          </tr>
         </thead>
         <tbody>
           <tr *ngFor="let h of items">
@@ -25,20 +30,22 @@
             <td>{{ h.ngayBatDau | vnDate:'yyyy-MM-dd' }}</td>
             <td>{{ h.ngayKetThuc | vnDate:'yyyy-MM-dd' }}</td>
             <td class="nowrap actions-cell">
-              <button class="btn" (click)="startEdit(h)">Sửa</button>
-              <button class="btn danger" (click)="requestDelete(h.id!)">Xóa</button>
+              <button class="btn" (click)="startEdit(h)">✏ Sửa</button>
+              <button class="btn danger" (click)="requestDelete(h.id!)">🗑 Xóa</button>
             </td>
           </tr>
-          <tr *ngIf="items.length === 0"><td colspan="4" class="muted">Không có ngày lễ nào.</td></tr>
+          <tr *ngIf="items.length === 0">
+            <td colspan="4" class="muted">Không có ngày lễ nào.</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
     <div class="pager">
       <div class="left">
-        <button class="btn" [disabled]="page <= 1" (click)="load(page - 1)">« Prev</button>
+        <button class="btn" [disabled]="page <= 1" (click)="load(page - 1)">« Trước</button>
         <span class="page-info">Trang {{ page }} / {{ totalPages }}</span>
-        <button class="btn" [disabled]="page >= totalPages" (click)="load(page + 1)">Next »</button>
+        <button class="btn" [disabled]="page >= totalPages" (click)="load(page + 1)">Tiếp »</button>
       </div>
       <div class="right">
         <label>Hiển thị</label>
@@ -51,8 +58,9 @@
     </div>
   </div>
 
+  <!-- Editor -->
   <div class="editor card" *ngIf="editing">
-    <h4 class="editor-title">{{ editing.id ? 'Sửa ngày lễ' : 'Thêm ngày lễ' }}</h4>
+    <h4 class="editor-title">{{ editing.id ? '✏ Sửa ngày lễ' : '➕ Thêm ngày lễ' }}</h4>
     <div class="field">
       <label>Tên ngày lễ</label>
       <input class="input" [(ngModel)]="editing.tenNgayLe" />
@@ -71,15 +79,16 @@
       </div>
     </div>
     <div class="editor-actions">
-      <button class="btn success" (click)="save()">Lưu</button>
+      <button class="btn success" (click)="save()">💾 Lưu</button>
       <button class="btn" (click)="cancelEdit()">Hủy</button>
     </div>
   </div>
 
+  <!-- Confirm Delete Modal -->
   <div class="modal-backdrop" *ngIf="confirmDeleteId">
     <div class="modal card">
-      <h4>Xác nhận xóa</h4>
-      <p>Bạn có chắc muốn xóa ngày lễ #{{ confirmDeleteId }} ?</p>
+      <h4>⚠ Xác nhận xóa</h4>
+      <p>Bạn có chắc muốn xóa ngày lễ <b>#{{ confirmDeleteId }}</b> ?</p>
       <div class="modal-actions">
         <button class="btn" (click)="cancelDelete()">Hủy</button>
         <button class="btn danger" (click)="confirmDelete()">Xóa</button>

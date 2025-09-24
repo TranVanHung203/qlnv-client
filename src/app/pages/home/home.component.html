@@ -1,20 +1,43 @@
-<div class="home-root">
-  <aside class="sidebar">
-    <div class="brand">QLNV</div>
-    <nav>
-      <a routerLink="." routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Quản lý nhân viên</a>
-      <a routerLink="config" routerLinkActive="active">Cấu hình thông báo</a>
-      <a routerLink="emails" routerLinkActive="active">Quản lý email người được thông báo</a>
-      <a routerLink="holidays" routerLinkActive="active">Quản lý ngày lễ</a>
-      <a routerLink="users" routerLinkActive="active">Quản lý user</a>
-      <a routerLink="notifications" routerLinkActive="active">Xem thông báo</a>
-    </nav>
-    <div class="sidebar-footer">
-      <button class="btn-logout" (click)="logout()">Đăng xuất</button>
-    </div>
-  </aside>
-
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QLNV Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <div class="home-root">
+    <aside class="sidebar">
+      <div class="brand">QLNV</div>
+      <button class="hamburger" (click)="toggleSidebar()">☰</button>
+      <nav>
+        <a routerLink="." routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="icon fas fa-users"></i> Quản lý nhân viên
+        </a>
+        <a routerLink="config" routerLinkActive="active">
+          <i class="icon fas fa-cog"></i> Cấu hình thông báo
+        </a>
+        <a routerLink="emails" routerLinkActive="active">
+          <i class="icon fas fa-envelope"></i> Quản lý email
+        </a>
+        <a routerLink="holidays" routerLinkActive="active">
+          <i class="icon fas fa-calendar-alt"></i> Quản lý ngày lễ
+        </a>
+        <a routerLink="users" routerLinkActive="active">
+          <i class="icon fas fa-user-cog"></i> Quản lý user
+        </a>
+        <a routerLink="notifications" routerLinkActive="active">
+          <i class="icon fas fa-bell"></i> Xem thông báo
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" (click)="logout()">Đăng xuất</button>
+      </div>
+    </aside>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</body>
+</html>

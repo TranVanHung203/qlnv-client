@@ -30,8 +30,8 @@ import { ToastService } from '../../shared/toast.service';
           <div class="badge">Active</div>
         </div>
         <div class="card-body">
-          <div class="row"><span class="label">Số ngày:</span> <span class="value">{{ active.soNgayThongBao }}</span></div>
-          <div class="row"><span class="label">Danh sách năm:</span> <span class="value">{{ active.danhSachNamThongBao }}</span></div>
+          <div class="row"><span class="label">Khoảng thời gian thông báo - đối với thử việc (ngày):</span> <span class="value">{{ active.soNgayThongBao }}</span></div>
+          <div class="row"><span class="label">Khoảng thời gian thông báo (năm):</span> <span class="value">{{ active.danhSachNamThongBao }}</span></div>
         </div>
         <div class="card-actions">
           <button class="btn" (click)="openList()">Lịch sử</button>
@@ -60,8 +60,8 @@ import { ToastService } from '../../shared/toast.service';
           <div *ngIf="editorErrors['soNgayThongBao']" class="field-error">{{ editorErrors['soNgayThongBao'] }}</div>
         </div>
         <div class="field">
-          <label>Danh sách năm (CSV)</label>
-          <input class="input" [(ngModel)]="editing.danhSachNamThongBao" placeholder="ví dụ: 2024,2025" />
+          <label>Danh sách năm</label>
+          <input class="input" [(ngModel)]="editing.danhSachNamThongBao" placeholder="ví dụ: 1,2 tức thông báo sau 1 năm và 2 năm" />
           <div *ngIf="editorErrors['danhSachNamThongBao']" class="field-error">{{ editorErrors['danhSachNamThongBao'] }}</div>
         </div>
       </div>
@@ -78,7 +78,7 @@ import { ToastService } from '../../shared/toast.service';
         <div class="modal-head"><h4>Danh sách cấu hình</h4><button class="close" (click)="listOpen = false">×</button></div>
         <table class="small">
           <thead>
-            <tr><th>Id</th><th>Số ngày</th><th>Danh sách năm</th><th>Trạng thái</th><th></th></tr>
+            <tr><th>Id</th><th>Số ngày đối với thử việc</th><th>Số năm</th><th>Trạng thái</th><th></th></tr>
           </thead>
           <tbody>
             <tr *ngFor="let c of all">

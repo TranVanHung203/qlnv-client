@@ -1,40 +1,44 @@
 <div class="users-page">
-  <h2>Quản lý Users</h2>
-
-  <div class="toolbar">
-    <input type="text" [(ngModel)]="q" placeholder="Tìm theo username hoặc email" />
-    <button (click)="onSearch()">Tìm</button>
-    <button (click)="startCreate()">Tạo user mới</button>
+  <div class="page-header">
+    <h2>Quản lý Users</h2>
+    <button class="btn primary" (click)="startCreate()">+ Tạo user mới</button>
   </div>
 
-  <div *ngIf="loading">Đang tải...</div>
+  <div class="filters">
+    <input type="text" [(ngModel)]="q" placeholder="Tìm theo username hoặc email" />
+    <button class="btn" (click)="onSearch()">Tìm</button>
+  </div>
 
-  <table class="users-table" *ngIf="!loading">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Họ tên</th>
-        <th>Role</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let u of items">
-        <td>{{ u.username }}</td>
-        <td>{{ u.email }}</td>
-        <td>{{ u.fullName }}</td>
-        <td>{{ u.role }}</td>
-        <td>
-          <button (click)="startEdit(u)">Sửa</button>
-          <button (click)="deleteItem(u.id)">Xóa</button>
-        </td>
-      </tr>
-      <tr *ngIf="items.length === 0">
-        <td colspan="5">Không có user nào.</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="loading" *ngIf="loading">Đang tải...</div>
+
+  <div class="table-wrap" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Họ tên</th>
+          <th>Role</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of items">
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.fullName }}</td>
+          <td>{{ u.role }}</td>
+          <td class="row-actions">
+            <button class="btn success" (click)="startEdit(u)">Sửa</button>
+            <button class="btn danger" (click)="deleteItem(u.id)">Xóa</button>
+          </td>
+        </tr>
+        <tr *ngIf="items.length === 0">
+          <td colspan="5" class="no-data">Không có user nào.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div class="pagination">
     <button [disabled]="page <= 1" (click)="page = page - 1; load()">Prev</button>
@@ -42,41 +46,45 @@
     <button [disabled]="page >= totalPages" (click)="page = page + 1; load()">Next</button>
   </div>
 
-  <div class="editor" *ngIf="editing">
-  <h3>{{ editModel.id ? 'Sửa user' : 'Tạo user' }}</h3>
-    <div class="row">
-  <label>Username</label>
-  <input type="text" [(ngModel)]="editModel.username" [disabled]="!!editModel.id" />
-      <div class="err" *ngIf="editorErrors['username']">{{ editorErrors['username'][0] }}</div>
-    </div>
+  <!-- Modal Editor -->
+  <div class="modal-backdrop" *ngIf="editing">
+    <div class="modal">
+      <h3>{{ editModel.id ? 'Sửa user' : 'Tạo user' }}</h3>
 
-    <div class="row">
-      <label>Email</label>
-      <input type="email" [(ngModel)]="editModel.email" />
-      <div class="err" *ngIf="editorErrors['email']">{{ editorErrors['email'][0] }}</div>
-    </div>
+      <div class="row">
+        <label>Username</label>
+        <input type="text" [(ngModel)]="editModel.username" [disabled]="!!editModel.id" [class.error]="editorErrors['username']" />
+        <div class="field-error" *ngIf="editorErrors['username']">{{ editorErrors['username'][0] }}</div>
+      </div>
 
-  <div class="row" *ngIf="!editModel.id">
-      <label>Password</label>
-      <input type="password" [(ngModel)]="editModel.password" />
-      <div class="err" *ngIf="editorErrors['password']">{{ editorErrors['password'][0] }}</div>
-    </div>
+      <div class="row">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="editModel.email" [class.error]="editorErrors['email']" />
+        <div class="field-error" *ngIf="editorErrors['email']">{{ editorErrors['email'][0] }}</div>
+      </div>
 
-    <div class="row">
-      <label>Họ tên</label>
-      <input type="text" [(ngModel)]="editModel.fullName" />
-      <div class="err" *ngIf="editorErrors['fullName']">{{ editorErrors['fullName'][0] }}</div>
-    </div>
+      <div class="row" *ngIf="!editModel.id">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="editModel.password" [class.error]="editorErrors['password']" />
+        <div class="field-error" *ngIf="editorErrors['password']">{{ editorErrors['password'][0] }}</div>
+      </div>
 
-    <div class="row">
-      <label>Role</label>
-      <input type="text" [(ngModel)]="editModel.role" />
-      <div class="err" *ngIf="editorErrors['role']">{{ editorErrors['role'][0] }}</div>
-    </div>
+      <div class="row">
+        <label>Họ tên</label>
+        <input type="text" [(ngModel)]="editModel.fullName" [class.error]="editorErrors['fullName']" />
+        <div class="field-error" *ngIf="editorErrors['fullName']">{{ editorErrors['fullName'][0] }}</div>
+      </div>
 
-    <div class="actions">
-      <button (click)="save()">Lưu</button>
-      <button (click)="cancelEdit()">Hủy</button>
+      <div class="row">
+        <label>Role</label>
+        <input type="text" [(ngModel)]="editModel.role" [class.error]="editorErrors['role']" />
+        <div class="field-error" *ngIf="editorErrors['role']">{{ editorErrors['role'][0] }}</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" (click)="save()">Lưu</button>
+        <button class="btn" (click)="cancelEdit()">Hủy</button>
+      </div>
     </div>
   </div>
 </div>

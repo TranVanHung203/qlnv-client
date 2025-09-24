@@ -36,27 +36,25 @@ export class UsersManagementComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.usersService
-      .getAll({ q: this.q, page: this.page, pageSize: this.pageSize })
-      .subscribe({
-        next: (p: PagedUsers) => {
-          this.items = p.items || [];
-          this.page = p.page || 1;
-          this.pageSize = p.pageSize || 10;
-          this.totalItems = p.totalItems || 0;
-          this.totalPages = p.totalPages || 0;
+    this.usersService.getAll({ q: this.q, page: this.page, pageSize: this.pageSize }).subscribe({
+      next: (p: PagedUsers) => {
+        this.items = p.items || [];
+        this.page = p.page || 1;
+        this.pageSize = p.pageSize || 10;
+        this.totalItems = p.totalItems || 0;
+        this.totalPages = p.totalPages || 0;
+        this.loading = false;
+      },
+      error: (err) => {
+        if (err && err.status === 403) {
+          this.toast.show('Bạn không có quyền xem danh sách users (403).', 'error');
           this.loading = false;
-        },
-        error: (err) => {
-          if (err && err.status === 403) {
-            this.toast.show('Bạn không có quyền xem danh sách users (403).', 'error');
-            this.loading = false;
-            return;
-          }
-          console.error('Failed loading users', err);
-          this.loading = false;
-        },
-      });
+          return;
+        }
+        console.error('Failed loading users', err);
+        this.loading = false;
+      },
+    });
   }
 
   onSearch() {
@@ -86,8 +84,26 @@ export class UsersManagementComponent implements OnInit {
     this.editorErrors = {};
     if (!this.editModel) return;
 
+    // client-side validation
+    const clientErrors: Record<string, string[]> = {};
+    const emailVal = (this.editModel.email || '').toString();
+    const usernameVal = (this.editModel.username || '').toString();
+    const passwordVal = (this.editModel.password || '').toString();
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
     if (!this.editModel.id) {
-      // create
+      // create validations
+      if (!usernameVal || !usernameVal.trim()) clientErrors['username'] = ['Username không được để trống'];
+      if (!emailVal || !emailVal.trim()) clientErrors['email'] = ['Email không được để trống'];
+      else if (!emailRegex.test(emailVal)) clientErrors['email'] = ['Email không hợp lệ'];
+      if (!passwordVal || !passwordVal.trim()) clientErrors['password'] = ['Password không được để trống'];
+
+      if (Object.keys(clientErrors).length) {
+        this.editorErrors = clientErrors;
+        this.toast.show('Vui lòng sửa các trường bị lỗi', 'warning');
+        return;
+      }
+
       const payload: any = {
         username: this.editModel.username,
         email: this.editModel.email,
@@ -110,8 +126,16 @@ export class UsersManagementComponent implements OnInit {
       });
     } else {
       // update
+      if (emailVal && !emailRegex.test(emailVal)) {
+        this.editorErrors = { email: ['Email không hợp lệ'] };
+        this.toast.show('Vui lòng sửa các trường bị lỗi', 'warning');
+        return;
+      }
+
       const id = this.editModel.id as string;
       const payload: any = {
+        id: id,
+        email: this.editModel.email,
         fullName: this.editModel.fullName,
         role: this.editModel.role,
       };
@@ -131,8 +155,9 @@ export class UsersManagementComponent implements OnInit {
     }
   }
 
-  deleteItem(id: string) {
-    if (!confirm('Xóa user này?')) return;
+  async deleteItem(id: string) {
+    const ok = await this.toast.confirm('Xóa user này?');
+    if (!ok) return;
     this.usersService.delete(id).subscribe({
       next: () => this.load(),
       error: (err) => {
@@ -141,6 +166,7 @@ export class UsersManagementComponent implements OnInit {
           return;
         }
         console.error('Delete failed', err);
+        this.toast.show('Xóa thất bại: ' + (err?.message || ''), 'error');
       },
     });
   }
@@ -153,8 +179,9 @@ export class UsersManagementComponent implements OnInit {
       if (parsed.summary.length) this.toast.show(parsed.summary.join('; '), 'error');
       return;
     }
-    // fallback: show a friendly alert and log
+    // fallback: show a friendly toast and log (avoid alert/popups)
     console.error('Unexpected error', err);
-    alert('Lỗi: ' + (err?.message || JSON.stringify(err)));
+    const msg = err?.message || (typeof err === 'string' ? err : JSON.stringify(err));
+    this.toast.show('Lỗi: ' + msg, 'error');
   }
 }
