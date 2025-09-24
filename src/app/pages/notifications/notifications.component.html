@@ -1,0 +1,45 @@
+<div class="notifications-page">
+  <h2>Lịch sử thông báo</h2>
+
+  <div class="filters card">
+    <div class="row">
+      <label>Email nhận <input type="text" [(ngModel)]="emailNhan" placeholder="email người nhận" /></label>
+      <label>From <input type="date" [(ngModel)]="from" /></label>
+      <label>To <input type="date" [(ngModel)]="to" /></label>
+    </div>
+    <div class="actions">
+      <button (click)="onSearch()">Tìm</button>
+      <button class="muted" (click)="clearFilters()">Xóa</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading">Đang tải...</div>
+
+  <table class="notifications-table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Ngày gửi</th>
+  <th>Tên nhân viên (đủ ngày làm việc)</th>
+  <th>Email</th>
+        <th>Lý do</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let it of items">
+  <td>{{ it.ngayGui | vnDate:'yyyy-MM-dd HH:mm' }}</td>
+        <td>{{ it.tenNhanVien || it.nhanVienId }}</td>
+        <td>{{ it.emailNhan }}</td>
+        <td>{{ it.lyDo }}</td>
+      </tr>
+      <tr *ngIf="items.length === 0">
+        <td colspan="4">Không có thông báo nào.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button [disabled]="page <= 1" (click)="page = page - 1; load(page)">Prev</button>
+    <span>Trang {{ page }} / {{ totalPages || 1 }}</span>
+    <button [disabled]="page >= totalPages" (click)="page = page + 1; load(page)">Next</button>
+  </div>
+</div>

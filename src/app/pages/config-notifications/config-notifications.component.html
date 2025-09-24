@@ -1,0 +1,89 @@
+<div class="page config-notifications">
+  <h2 class="page-title">⚙️ Cấu hình thông báo</h2>
+
+  <!-- Card hiển thị cấu hình đang sử dụng -->
+  <div class="card active-card" *ngIf="active">
+    <h3>📌 Đang sử dụng</h3>
+    <div class="row"><strong>Số ngày thông báo:</strong> {{ active.soNgayThongBao }}</div>
+    <div class="row"><strong>Danh sách năm thông báo:</strong> {{ active.danhSachNamThongBao }}</div>
+    <div class="row"><strong>Id:</strong> {{ active.id }}</div>
+    <div class="actions">
+      <button class="btn" (click)="openList()">📖 Lịch sử / Chọn</button>
+      <button class="btn primary" (click)="startEdit(active)">✏️ Sửa</button>
+    </div>
+  </div>
+
+  <!-- Khi chưa có cấu hình -->
+  <div *ngIf="active === null" class="card empty">
+    <h3>Chưa có cấu hình</h3>
+    <p>Hiện chưa có cấu hình thông báo nào đang được sử dụng.</p>
+    <div class="actions">
+      <button class="btn success" (click)="startEdit()">➕ Tạo cấu hình mới</button>
+      <button class="btn" (click)="openList()">📖 Xem lịch sử</button>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div class="editor card" *ngIf="editing">
+    <h3>{{ editing.id ? ('✏️ Sửa cấu hình #' + editing.id) : '➕ Tạo cấu hình mới' }}</h3>
+    <div class="field">
+      <label>Số ngày thông báo</label>
+      <input type="number" [(ngModel)]="editing.soNgayThongBao" />
+      <div *ngIf="editorErrors['soNgayThongBao']" class="field-error">{{ editorErrors['soNgayThongBao'] }}</div>
+    </div>
+    <div class="field">
+      <label>Danh sách năm (CSV, ví dụ: 1,2,3)</label>
+      <input [(ngModel)]="editing.danhSachNamThongBao" />
+      <div *ngIf="editorErrors['danhSachNamThongBao']" class="field-error">{{ editorErrors['danhSachNamThongBao'] }}</div>
+    </div>
+    <div class="editor-actions">
+      <button class="btn success" (click)="save()">💾 Lưu</button>
+      <button class="btn" (click)="cancelEdit()">❌ Hủy</button>
+      <button *ngIf="editing.id" class="btn danger" (click)="requestDelete(editing.id!)">🗑️ Xóa</button>
+    </div>
+  </div>
+
+  <!-- Modal: danh sách -->
+  <div class="modal-backdrop" *ngIf="listOpen">
+    <div class="modal card">
+      <h3>📖 Danh sách cấu hình</h3>
+      <table class="table small">
+        <thead>
+          <tr>
+            <th>Id</th><th>Số ngày</th><th>Danh sách năm</th><th>Kích hoạt</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of all">
+            <td>{{ c.id }}</td>
+            <td>{{ c.soNgayThongBao }}</td>
+            <td>{{ c.danhSachNamThongBao }}</td>
+            <td>
+              <span class="badge" [class.active]="c.isActive">{{ c.isActive ? 'Đang dùng' : '' }}</span>
+            </td>
+            <td class="row-actions">
+              <button class="btn small" (click)="select(c)">Chọn</button>
+              <button class="btn small primary" (click)="startEdit(c)">Sửa</button>
+              <button class="btn small success" (click)="activate(c.id!)">Kích hoạt</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="modal-actions">
+        <button class="btn" (click)="listOpen = false">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: xác nhận xóa -->
+  <div class="modal-backdrop" *ngIf="confirmDeleteId">
+    <div class="modal card">
+      <h3>⚠️ Xác nhận xóa</h3>
+      <p>Bạn có chắc muốn xóa cấu hình #{{ confirmDeleteId }} ?<br />Hành động <strong>không thể hoàn tác</strong>.</p>
+      <div class="modal-actions">
+        <button class="btn" (click)="cancelDelete()">Hủy</button>
+        <button class="btn danger" (click)="confirmDelete()">Xóa</button>
+      </div>
+    </div>
+  </div>
+</div>

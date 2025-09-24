@@ -1,0 +1,33 @@
+.notifications-page {
+  padding: 16px;
+
+  h2 { margin-bottom: 12px; }
+
+  .filters.card {
+    padding: 12px;
+    margin-bottom: 12px;
+    .row { display: flex; gap: 12px; align-items: center; }
+    label { display: flex; flex-direction: column; font-weight: 600; }
+    .actions { margin-top: 8px; display:flex; gap:8px; }
+  }
+
+  .notifications-table {
+    width: 100%;
+    border-collapse: collapse;
+    thead th { text-align: left; border-bottom: 1px solid #ddd; padding: 8px; }
+    tbody td { padding: 8px; border-bottom: 1px solid #f3f3f3; }
+  }
+
+  .pagination { margin-top: 12px; display:flex; gap:8px; align-items:center; }
+}
+.notifications-page { padding: 18px; }
+.card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 6px 18px rgba(8,12,20,0.06); }
+.filters { display:flex; flex-direction:column; gap:8px; align-items:stretch; margin-bottom:12px; }
+.filters .row { display:flex; gap:12px; align-items:flex-end; }
+.filters label { display:flex; flex-direction:column; font-size:0.9rem; flex:1; }
+.filters .actions { display:flex; gap:8px; justify-content:flex-end; }
+.filters button.muted { background:transparent; color:#666; border:1px solid #ddd; }
+.notifications-table { width:100%; border-collapse:collapse; margin-top:10px }
+.notifications-table th, .notifications-table td { border:1px solid #f1f1f1; padding:8px; }
+.notifications-table th { background:#fafafa; text-align:left }
+.pagination { margin-top:8px; }

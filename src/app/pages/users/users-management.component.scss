@@ -1,0 +1,40 @@
+.users-page {
+  padding: 12px;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.users-table th,
+.users-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.editor {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+.editor .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.editor label {
+  width: 90px;
+}
+.err {
+  color: #b00020;
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}

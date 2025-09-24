@@ -1,0 +1,20 @@
+:host{display:block;font-family:Segoe UI, Roboto, Arial, sans-serif;color:#0b2545}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.muted{color:#6b7280}
+.actions{display:flex;gap:12px;align-items:center}
+.search{display:flex;gap:8px}
+.card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 8px 24px rgba(2,6,23,0.06)}
+.small{width:100%;border-collapse:collapse}
+.small th,.small td{border-bottom:1px solid #f3f4f6;padding:12px}
+.name-cell{font-weight:600}
+.input{padding:8px;border-radius:8px;border:1px solid #e6e9ee}
+.field-inline{display:flex;gap:12px}
+.field-error{color:#b91c1c;font-size:0.9rem;margin-top:6px}
+.editor{margin-top:12px}
+.editor-actions{display:flex;gap:8px;margin-top:10px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center}
+.modal{width:480px;max-width:95%;padding:14px;background:#fff;border-radius:8px}
+.btn{padding:7px 12px;border-radius:8px;border:1px solid transparent;background:#f3f4f6;cursor:pointer}
+.btn.success{background:#0ea5a4;color:#fff}
+.btn.danger{background:#ef4444;color:#fff}
+@media (max-width:720px){.field-inline{flex-direction:column}}

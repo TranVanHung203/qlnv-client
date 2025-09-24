@@ -1,0 +1,20 @@
+<div class="home-root">
+  <aside class="sidebar">
+    <div class="brand">QLNV</div>
+    <nav>
+      <a routerLink="." routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Quản lý nhân viên</a>
+      <a routerLink="config" routerLinkActive="active">Cấu hình thông báo</a>
+      <a routerLink="emails" routerLinkActive="active">Quản lý email người được thông báo</a>
+      <a routerLink="holidays" routerLinkActive="active">Quản lý ngày lễ</a>
+      <a routerLink="users" routerLinkActive="active">Quản lý user</a>
+      <a routerLink="notifications" routerLinkActive="active">Xem thông báo</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">Đăng xuất</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

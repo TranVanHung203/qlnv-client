@@ -1,0 +1,78 @@
+<div class="page emails-management">
+  <div class="header">
+    <div>
+      <h3>Quản lý Email thông báo</h3>
+      <div class="muted">Danh sách các địa chỉ email nhận thông báo</div>
+    </div>
+    <div class="actions">
+      <div class="search">
+        <input class="input" [(ngModel)]="filterEmail" placeholder="Tìm theo email" />
+        <button class="btn" (click)="load(1)">Tìm</button>
+      </div>
+      <button class="btn success" (click)="startEdit()">Thêm email</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table class="small">
+        <thead>
+          <tr><th>Email</th><th style="width:1%"></th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of items">
+            <td class="email-cell">{{ e.email }}</td>
+            <td class="nowrap actions-cell">
+              <button class="btn" title="Sửa" (click)="startEdit(e)">Sửa</button>
+              <button class="btn danger" title="Xóa" (click)="requestDelete(e.id!)">Xóa</button>
+            </td>
+          </tr>
+          <tr *ngIf="items.length === 0">
+            <td colspan="2" class="muted">Không có email nào.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <div class="left">
+        <button class="btn" [disabled]="page <= 1" (click)="load(page - 1)">« Prev</button>
+        <span class="page-info">Trang {{ page }} / {{ totalPages }}</span>
+        <button class="btn" [disabled]="page >= totalPages" (click)="load(page + 1)">Next »</button>
+      </div>
+      <div class="right">
+        <label>Hiển thị</label>
+        <select [(ngModel)]="pageSize" (change)="load(1)">
+          <option [value]="5">5</option>
+          <option [value]="8">8</option>
+          <option [value]="20">20</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="editor card" *ngIf="editing">
+    <h4 class="editor-title">{{ editing.id ? 'Sửa email' : 'Thêm email' }}</h4>
+    <div class="field">
+      <label>Email</label>
+      <input class="input" [(ngModel)]="editing.email" />
+      <div *ngIf="editorErrors['Email']" class="field-error">{{ editorErrors['Email'] }}</div>
+      <div *ngIf="editorErrors['email']" class="field-error">{{ editorErrors['email'] }}</div>
+    </div>
+    <div class="editor-actions">
+      <button class="btn success" (click)="save()">Lưu</button>
+      <button class="btn" (click)="cancelEdit()">Hủy</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="confirmDeleteId">
+    <div class="modal card">
+      <h4>Xác nhận xóa</h4>
+      <p>Bạn có chắc muốn xóa email này (#{{ confirmDeleteId }})?</p>
+      <div class="modal-actions">
+        <button class="btn" (click)="cancelDelete()">Hủy</button>
+        <button class="btn danger" (click)="confirmDelete()">Xóa</button>
+      </div>
+    </div>
+  </div>
+</div>

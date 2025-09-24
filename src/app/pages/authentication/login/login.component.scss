@@ -1,0 +1,55 @@
+.login-wrapper {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:70vh;
+  padding:2rem;
+
+  .login-card{
+    width:100%;
+    max-width:460px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
+    padding:1.5rem 1.75rem;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(10,22,45,0.08);
+    border:1px solid rgba(15,23,42,0.03);
+
+    .brand{ display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;
+      .logo{ width:48px; height:48px; border-radius:8px; background:linear-gradient(90deg,#4f46e5,#06b6d4); color:white; display:flex; align-items:center; justify-content:center; font-weight:800; }
+      .title{ font-size:1.1rem; font-weight:700; color:#0f172a }
+    }
+
+    .login-form{ margin-top:0.25rem;
+      h2{ margin:0 0 0.6rem 0; font-size:1.25rem; color:#0f172a }
+
+      .field{ display:block; margin-bottom:0.85rem;
+        .label{ display:block; margin-bottom:0.35rem; font-weight:600; color:#334155 }
+        input{ width:100%; padding:0.6rem 0.85rem; border:1px solid #e6eef8; border-radius:8px; background:#fff; font-size:0.95rem }
+        .error{ color:#dc2626; font-size:0.85rem; margin-top:0.35rem }
+      }
+
+      .actions{ display:flex; justify-content:space-between; align-items:center; margin:0.5rem 0 1rem;
+        .remember{ display:flex; gap:0.5rem; align-items:center }
+        .forgot{ color:#2563eb; text-decoration:none }
+      }
+
+      .btn-primary{ width:100%; padding:0.7rem; border-radius:10px; background:linear-gradient(90deg,#06b6d4,#3b82f6); color:white; font-weight:700; border:none }
+      .btn-primary[disabled]{ opacity:0.7 }
+
+      .form-error{ margin-bottom:0.75rem; color:#b91c1c; font-weight:700 }
+    }
+
+    .card-footer{ margin-top:1rem; font-size:0.85rem; color:#64748b; text-align:center }
+  }
+}
+
+/* forgot/reset base styles */
+.forgot-wrapper, .reset-wrapper{
+  max-width:540px; margin:2rem auto; padding:1.25rem; background:#fff; border-radius:10px; box-shadow:0 8px 20px rgba(2,6,23,0.06)
+}
+
+.forgot-wrapper h2, .reset-wrapper h2{ margin:0 0 0.75rem 0; font-size:1.25rem }
+
+.forgot-wrapper label, .reset-wrapper label{ display:block; margin-bottom:0.75rem }
+.forgot-wrapper input, .reset-wrapper input{ width:100%; padding:0.6rem; border-radius:8px; border:1px solid #e6eef8 }
+.forgot-wrapper .message, .reset-wrapper .message{ margin:0.5rem 0; color:#065f46 }
