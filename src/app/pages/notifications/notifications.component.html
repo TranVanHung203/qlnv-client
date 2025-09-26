@@ -46,7 +46,7 @@
     </tbody>
   </table>
 
-  <div class="pagination" *ngIf="!loading && totalPages > 1">
+  <div class="pagination" *ngIf="!loading && totalPages > 0">
     <button [disabled]="page <= 1" (click)="page = page - 1; load(page)">⬅ Trước</button>
     <span>Trang {{ page }} / {{ totalPages || 1 }}</span>
     <button [disabled]="page >= totalPages" (click)="page = page + 1; load(page)">Tiếp ➡</button>

@@ -155,9 +155,8 @@ export class UsersManagementComponent implements OnInit {
     }
   }
 
-  async deleteItem(id: string) {
-    const ok = await this.toast.confirm('Xóa user này?');
-    if (!ok) return;
+  deleteItem(id: string) {
+    if (!confirm('Xóa user này?')) return;
     this.usersService.delete(id).subscribe({
       next: () => this.load(),
       error: (err) => {
@@ -166,7 +165,6 @@ export class UsersManagementComponent implements OnInit {
           return;
         }
         console.error('Delete failed', err);
-        this.toast.show('Xóa thất bại: ' + (err?.message || ''), 'error');
       },
     });
   }
@@ -179,9 +177,8 @@ export class UsersManagementComponent implements OnInit {
       if (parsed.summary.length) this.toast.show(parsed.summary.join('; '), 'error');
       return;
     }
-    // fallback: show a friendly toast and log (avoid alert/popups)
+    // fallback: show a friendly alert and log
     console.error('Unexpected error', err);
-    const msg = err?.message || (typeof err === 'string' ? err : JSON.stringify(err));
-    this.toast.show('Lỗi: ' + msg, 'error');
+    alert('Lỗi: ' + (err?.message || JSON.stringify(err)));
   }
 }

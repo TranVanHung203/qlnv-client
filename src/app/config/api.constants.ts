@@ -1,4 +1,4 @@
-export const API_BASE = 'https://localhost:7094';
+export const API_BASE = 'http://192.168.1.140';
 
 export function apiUrl(path: string) {
   // ensure leading slash

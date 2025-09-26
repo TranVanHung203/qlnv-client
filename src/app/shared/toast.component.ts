@@ -11,11 +11,7 @@ import { ToastService, ToastMessage } from './toast.service';
     <div *ngFor="let t of messages" class="toast" [ngClass]="t.type">
       <div class="toast-body">
         <div class="toast-text">{{ t.text }}</div>
-        <div class="toast-actions">
-          <button *ngIf="t.isConfirm" class="btn confirm" (click)="confirm(t.id)">OK</button>
-          <button *ngIf="t.isConfirm" class="btn cancel" (click)="cancel(t.id)">Hủy</button>
-          <button *ngIf="!t.isConfirm" class="close" (click)="close(t.id)">×</button>
-        </div>
+        <button class="close" (click)="close(t.id)">×</button>
       </div>
     </div>
   </div>
@@ -48,18 +44,6 @@ export class ToastComponent {
 
   close(id?: string) {
     if (!id) return;
-    this.messages = this.messages.filter(x => x.id !== id);
-  }
-
-  confirm(id?: string) {
-    if (!id) return;
-    this.toast.confirmResponse(id, true);
-    this.messages = this.messages.filter(x => x.id !== id);
-  }
-
-  cancel(id?: string) {
-    if (!id) return;
-    this.toast.confirmResponse(id, false);
     this.messages = this.messages.filter(x => x.id !== id);
   }
 }
