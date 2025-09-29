@@ -1,196 +1,330 @@
-$primary-color: #1e3a8a;
-$primary-hover: #1e40af;
-$accent-color: #ef4444;
-$text-color: #0f172a;
-$bg-color: #f6f8fb;
-$sidebar-bg: linear-gradient(180deg, #ffffff, #f8fafc);
-$shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
-$border-radius: 12px;
-$transition: all 0.2s ease-in-out;
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$background-color: #f5f7fa;
+$text-color: #333;
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 70px;
 
-@media (prefers-color-scheme: dark) {
-  $primary-color: #60a5fa;
-  $primary-hover: #93c5fd;
-  $accent-color: #f87171;
-  $text-color: #e2e8f0;
-  $bg-color: #1e293b;
-  $sidebar-bg: linear-gradient(180deg, #334155, #1e293b);
-  $shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .home-root {
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  min-height: calc(100vh - 60px);
-  background: $bg-color;
-  transition: $transition;
+  min-height: 100vh;
+  background-color: $background-color;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .sidebar {
-  width: 260px;
-  background: $sidebar-bg;
-  border-radius: $border-radius;
-  padding: 1.5rem;
-  box-shadow: $shadow;
+  width: $sidebar-width;
+  background-color: $primary-color;
+  color: white;
+   left: 0;  // thêm dòng này
+    top: 0;
   display: flex;
   flex-direction: column;
-  transition: $transition;
+  transition: width 0.3s ease;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+ .brand {
+    padding: 1rem;
+    text-align: center;
+
+    img {
+      max-width: 100%;   // logo không vượt quá chiều rộng sidebar
+      max-height: 50px;  // giới hạn chiều cao
+      object-fit: contain;
+    }
+  }
+  &.nav-active {
+    width: $sidebar-collapsed-width;
+
+    .brand, .sidebar-footer, nav a span {
+      display: none;
+    }
+
+    nav a {
+      justify-content: center;
+      .icon {
+        margin-right: 0;
+      }
+    }
+  }
 
   .brand {
-    font-weight: 800;
+    padding: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
     font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: $text-color;
-    letter-spacing: 1px;
+    padding: 1rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
   }
 
   nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
+    flex: 1;
+    padding: 1rem 0;
 
-  a {
-    padding: 0.75rem 1rem;
-    color: $text-color;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    transition: $transition;
-
-    .icon {
-      font-size: 1.1rem;
-      color: $primary-color;
-    }
-
-    &:hover {
-      transform: translateX(6px);
-      background: $primary-hover;
-      color: #fff;
+    a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
 
       .icon {
-        color: #fff;
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
       }
-    }
 
-    &.active {
-      background: linear-gradient(90deg, $primary-color, $primary-hover);
-      color: #fff;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      &.active {
+        background-color: $secondary-color;
+      }
 
-      .icon {
-        color: #fff;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      span {
+        font-size: 1rem;
       }
     }
   }
 
   .sidebar-footer {
-    margin-top: auto;
-    display: flex;
-    justify-content: center;
-  }
-}
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
-.btn-logout {
-  background: $accent-color;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: $transition;
+    .btn-logout {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.2s ease;
 
-  &:hover {
-    background: darken($accent-color, 10%);
-    transform: scale(1.05);
-  }
-
-  &:active {
-    transform: scale(0.95);
+      &:hover {
+        background-color: #c0392b;
+      }
+    }
   }
 }
 
 .content {
+  margin-left: $sidebar-width;
   flex: 1;
-  transition: $transition;
-}
-
-.page {
-  background: #fff;
   padding: 1.5rem;
-  border-radius: $border-radius;
-  box-shadow: $shadow;
-  animation: fadeIn 0.3s ease-in;
+  transition: margin-left 0.3s ease;
+  background-color: white;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: $text-color;
-  cursor: pointer;
-}
-
-@media (max-width: 860px) {
-  .home-root {
-    flex-direction: column;
-    padding: 1rem;
+@media (max-width: 1024px) {
+  .sidebar {
+    width: $sidebar-width;
   }
 
+  .content {
+    margin-left: $sidebar-width;
+  }
+}
+
+@media (max-width: 768px) {
   .sidebar {
-    width: 100%;
-    flex-direction: row;
-    gap: 0.75rem;
-    overflow-x: auto;
-    padding: 0.75rem;
-    align-items: center;
-    position: relative;
+    width: $sidebar-collapsed-width;
 
-    nav {
-      flex-direction: row;
-      gap: 0.5rem;
-      margin: 0;
-      display: none;
-    }
+    &.nav-active {
+      width: $sidebar-width;
 
-    a {
-      white-space: nowrap;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.9rem;
-    }
+      .brand, .sidebar-footer, nav a span {
+        display: block;
+      }
 
-    .brand {
-      margin-right: 1rem;
-      font-size: 1.2rem;
+      nav a {
+        justify-content: flex-start;   // 🔹 căn trái để icon + text đều nhau
+        align-items: center;           // 🔹 đảm bảo icon + text thẳng hàng
+        padding-left: 1.2rem;          // 🔹 thêm khoảng cách bên trái cho đẹp
+
+        .icon {
+          margin-right: 0.8rem;
+        }
+      }
     }
 
     .hamburger {
       display: block;
     }
 
-    &.nav-active nav {
+    .brand, .sidebar-footer, nav a span {
+      display: none;
+    }
+
+    nav a {
+      justify-content: center;
+
+      .icon {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .content {
+    margin-left: $sidebar-collapsed-width;
+    padding: 1rem;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .content {
+    margin-left: $sidebar-collapsed-width;
+    padding: 0.5rem;
+  }
+
+  .popup-content {
+    width: 95%;
+    max-width: 90vw;
+  }
+}
+
+// Popup Modal Styles
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .popup-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+
+    &.active {
+      transform: scale(1);
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      color: $primary-color;
+      font-size: 1.3rem;
+    }
+
+    .popup-body {
+      margin: 1rem 0;
+
+      .field {
+        margin-bottom: 1.5rem;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+
+        label {
+          display: block;
+          font-weight: 500;
+          margin-bottom: 0;
+          font-size: clamp(0.75rem, 2vw, 0.875rem);
+      
+          text-align: left;
+        }
+
+        input,
+        textarea {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
+          font-size: 0.9rem;
+          box-sizing: border-box;
+          min-height: 48px;
+
+          &:focus {
+            border-color: $secondary-color;
+            outline: none;
+          }
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 80px;
+        }
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: $text-color;
+      }
+    }
+
+    .popup-footer {
       display: flex;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: $sidebar-bg;
-      flex-direction: column;
-      padding: 1rem;
-      box-shadow: $shadow;
-      z-index: 10;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease;
+
+        &.confirm {
+          background-color: $secondary-color;
+          color: white;
+
+          &:hover {
+            background-color: darken($secondary-color, 10%);
+          }
+        }
+
+        &.cancel {
+          background-color: #f1f3f5;
+          color: $text-color;
+
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+      }
     }
   }
 }

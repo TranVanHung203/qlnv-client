@@ -58,29 +58,31 @@
     </div>
   </div>
 
-  <!-- Editor -->
-  <div class="editor card" *ngIf="editing">
-    <h4 class="editor-title">{{ editing.id ? '✏ Sửa ngày lễ' : '➕ Thêm ngày lễ' }}</h4>
-    <div class="field">
-      <label>Tên ngày lễ</label>
-      <input class="input" [(ngModel)]="editing.tenNgayLe" />
-      <div *ngIf="editorErrors['tenNgayLe']" class="field-error">{{ editorErrors['tenNgayLe'] }}</div>
-    </div>
-    <div class="field-inline">
-      <div>
-        <label>Ngày bắt đầu</label>
-        <input type="date" class="input" [(ngModel)]="editing.ngayBatDau" />
-        <div *ngIf="editorErrors['ngayBatDau']" class="field-error">{{ editorErrors['ngayBatDau'] }}</div>
+  <!-- Editor Modal -->
+  <div class="modal-backdrop" *ngIf="editing">
+    <div class="modal card">
+      <h4 class="editor-title">{{ editing.id ? '✏ Sửa ngày lễ' : '➕ Thêm ngày lễ' }}</h4>
+      <div class="field">
+        <label>Tên ngày lễ</label>
+        <input class="input" [(ngModel)]="editing.tenNgayLe" />
+        <div *ngIf="editorErrors['tenNgayLe']" class="field-error">{{ editorErrors['tenNgayLe'] }}</div>
       </div>
-      <div>
-        <label>Ngày kết thúc</label>
-        <input type="date" class="input" [(ngModel)]="editing.ngayKetThuc" />
-        <div *ngIf="editorErrors['ngayKetThuc']" class="field-error">{{ editorErrors['ngayKetThuc'] }}</div>
+      <div class="field-inline">
+        <div>
+          <label>Ngày bắt đầu</label>
+          <input type="date" class="input" [(ngModel)]="editing.ngayBatDau" />
+          <div *ngIf="editorErrors['ngayBatDau']" class="field-error">{{ editorErrors['ngayBatDau'] }}</div>
+        </div>
+        <div>
+          <label>Ngày kết thúc</label>
+          <input type="date" class="input" [(ngModel)]="editing.ngayKetThuc" />
+          <div *ngIf="editorErrors['ngayKetThuc']" class="field-error">{{ editorErrors['ngayKetThuc'] }}</div>
+        </div>
       </div>
-    </div>
-    <div class="editor-actions">
-      <button class="btn success" (click)="save()">💾 Lưu</button>
-      <button class="btn" (click)="cancelEdit()">Hủy</button>
+      <div class="modal-actions">
+        <button class="btn success" (click)="save()">💾 Lưu</button>
+        <button class="btn" (click)="cancelEdit()">Hủy</button>
+      </div>
     </div>
   </div>
 

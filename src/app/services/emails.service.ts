@@ -8,6 +8,7 @@ import { apiUrl } from '../config/api.constants';
 export interface EmailItem {
   id?: number;
   email: string;
+  name: string;
 }
 
 export interface PagedEmails {
@@ -30,14 +31,14 @@ export class EmailsService {
     return { headers };
   }
 
-  getAll(filter?: { email?: string; page?: number; pageSize?: number }): Observable<PagedEmails> {
+  getAll(filter?: { email?: string; name?: string; page?: number; pageSize?: number }): Observable<PagedEmails> {
     let params = new HttpParams();
     if (filter?.email) params = params.set('email', filter.email);
+    if (filter?.name) params = params.set('name', filter.name);
     if (filter?.page) params = params.set('page', String(filter.page));
     if (filter?.pageSize) params = params.set('pageSize', String(filter.pageSize));
     return this.http.get<PagedEmails>(this.base, { ...this.authHeaders(), params }).pipe(
       catchError((err) => {
-        // Treat 404 as "no results" (not an error)
         if (err && err.status === 404) {
           const empty: PagedEmails = { items: [], page: filter?.page || 1, pageSize: filter?.pageSize || 8, totalItems: 0, totalPages: 1 };
           return of(empty);

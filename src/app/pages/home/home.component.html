@@ -9,26 +9,29 @@
 <body>
   <div class="home-root">
     <aside class="sidebar">
-      <div class="brand">QLNV</div>
+      <div class="brand">
+  <img src="https://atpro.com.vn/wp-content/uploads/2020/10/logo-cong-ty-1024x342-1024x342.png" alt="Logo QLNV">
+</div>
+
       <button class="hamburger" (click)="toggleSidebar()">☰</button>
       <nav>
         <a routerLink="." routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="icon fas fa-users"></i> Quản lý nhân viên
+          <i class="icon fas fa-users"></i> <span>Quản lý nhân viên</span>
         </a>
         <a routerLink="config" routerLinkActive="active">
-          <i class="icon fas fa-cog"></i> Cấu hình thông báo
+          <i class="icon fas fa-cog"></i> <span>Cấu hình thông báo</span>
         </a>
         <a routerLink="emails" routerLinkActive="active">
-          <i class="icon fas fa-envelope"></i> Quản lý email
+          <i class="icon fas fa-envelope"></i> <span>Quản lý email</span>
         </a>
         <a routerLink="holidays" routerLinkActive="active">
-          <i class="icon fas fa-calendar-alt"></i> Quản lý ngày lễ
+          <i class="icon fas fa-calendar-alt"></i> <span>Quản lý ngày lễ</span>
         </a>
         <a routerLink="users" routerLinkActive="active">
-          <i class="icon fas fa-user-cog"></i> Quản lý user
+          <i class="icon fas fa-user-cog"></i> <span>Quản lý user</span>
         </a>
         <a routerLink="notifications" routerLinkActive="active">
-          <i class="icon fas fa-bell"></i> Xem thông báo
+          <i class="icon fas fa-bell"></i> <span>Xem thông báo</span>
         </a>
       </nav>
       <div class="sidebar-footer">
@@ -38,6 +41,37 @@
     <main class="content">
       <router-outlet></router-outlet>
     </main>
+
+    <!-- Popup Modal -->
+    <div class="popup-overlay" [class.active]="showPopup">
+      <div class="popup-content" [class.active]="showPopup">
+        <h2>{{ popupTitle }}</h2>
+        <div class="popup-body">
+          <ng-container [ngSwitch]="popupType">
+            <ng-container *ngSwitchCase="'edit'">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" [(ngModel)]="popupData.name" placeholder="Name">
+              </div>
+              <div class="field">
+                <label for="description">Description</label>
+                <textarea id="description" [(ngModel)]="popupData.description" placeholder="Description"></textarea>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'delete'">
+              <p>Are you sure you want to delete this item?</p>
+            </ng-container>
+            <ng-container *ngSwitchCase="'notification'">
+              <p>{{ popupData.message }}</p>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div class="popup-footer">
+          <button class="cancel" (click)="closePopup()">Cancel</button>
+          <button class="confirm" (click)="confirmPopup()">Confirm</button>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>

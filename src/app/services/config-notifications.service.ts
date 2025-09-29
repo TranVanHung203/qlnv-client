@@ -10,6 +10,8 @@ export interface ConfigNotification {
   soNgayThongBao: number;
   danhSachNamThongBao: string;
   isActive?: boolean;
+  excludeSaturday: boolean;
+  excludeSunday: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,11 +25,9 @@ export class ConfigNotificationsService {
     const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
     return this.http.get<ConfigNotification>(`${this.base}/active`, { headers }).pipe(
       catchError((err) => {
-        // If backend returns 404, treat as "no active configuration" and return null
         if (err && err.status === 404) {
           return of(null);
         }
-        // otherwise rethrow
         throw err;
       })
     );
@@ -39,11 +39,11 @@ export class ConfigNotificationsService {
     return this.http.get<ConfigNotification[]>(`${this.base}/all`, { headers });
   }
 
- activate(id: number): Observable<void> {
-  const token = this.auth.getToken();
-  const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-  return this.http.post<void>(`${this.base}/${id}/activate`, {}, { headers });
-}
+  activate(id: number): Observable<void> {
+    const token = this.auth.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    return this.http.post<void>(`${this.base}/${id}/activate`, {}, { headers });
+  }
 
   create(payload: Partial<ConfigNotification>): Observable<ConfigNotification> {
     const token = this.auth.getToken();

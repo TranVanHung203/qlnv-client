@@ -1,6 +1,7 @@
 .users-page {
   max-width: 1100px;
-  margin: auto;
+  margin-left: -1px;  // khoảng cách với mép trái
+  margin-right: auto; // để vẫn có khoảng trống bên phải
   padding: 22px;
 }
 
@@ -13,6 +14,11 @@
   h2 {
     margin: 0;
     color: #1f2d3d;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+  }
+
+  .btn {
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
   }
 }
 
@@ -26,11 +32,12 @@
     flex: 1;
     border-radius: 6px;
     border: 1px solid #e6eef8;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
   }
 }
 
 .table-wrap {
-  overflow: auto;
+  overflow-x: auto;
   margin-bottom: 12px;
 
   table {
@@ -43,12 +50,12 @@
   td {
     text-align: left;
     padding: 10px 12px;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
   }
 
   thead th {
     color: #334155;
     font-weight: 600;
-    font-size: 0.95rem;
   }
 
   tbody tr {
@@ -65,7 +72,13 @@
 
 .row-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+
+  .btn {
+    flex: 1;
+    min-width: 80px;
+  }
 }
 
 .loading {
@@ -79,6 +92,8 @@
   justify-content: center;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
 
   button {
     padding: 8px 12px;
@@ -86,6 +101,7 @@
     border: 1px solid #d1d5db;
     background: #fff;
     cursor: pointer;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
   }
 }
 
@@ -94,6 +110,7 @@
   border-radius: 6px;
   border: none;
   cursor: pointer;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
 
   &.primary {
     background: #2563eb;
@@ -121,6 +138,7 @@ input.error {
   border-color: #ef4444;
 }
 
+/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -141,6 +159,7 @@ input.error {
 
   h3 {
     margin: 0 0 8px;
+    font-size: clamp(1rem, 2vw, 1.2rem);
   }
 
   .row {
@@ -158,6 +177,7 @@ input.error {
       padding: 8px;
       border-radius: 6px;
       border: 1px solid #e6eef8;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
     }
   }
 
@@ -166,5 +186,86 @@ input.error {
     justify-content: flex-end;
     gap: 8px;
     margin-top: 14px;
+  }
+}
+
+/* 📱 Responsive cho mobile */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .table-wrap {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+      width: 100%;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      margin-bottom: 12px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+      border: none;
+      padding: 6px 0;
+      text-align: left;
+    }
+
+    td::before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 2px;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+
+      &::before {
+        content: "Hành động";
+        display: block;
+        font-weight: 600;
+        color: #64748b;
+        width: 100%;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+.modal .row {
+  input,
+  select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #e6eef8;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+  }
+
+  select.error {
+    border-color: #ef4444;
   }
 }

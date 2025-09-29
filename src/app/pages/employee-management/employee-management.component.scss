@@ -1,64 +1,434 @@
+$primary-color: #2c3e50;
+$secondary-color: #3498db;
+$background-color: #f5f7fa;
+$text-color: #333;
+$success-color: #2ecc71;
+$danger-color: #e74c3c;
+$border-radius: 6px;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .employee-management {
-  max-width: 1100px;
-  margin: auto;
-  padding: 22px;
+  padding: 1rem;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  max-width: 100%;
+  overflow-x: auto;
 
   .page-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:1rem;
-    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 
-    h2 { margin:0; color:#1f2d3d }
-    .sub { margin:0; color:#64748b; font-size:0.95rem }
+    h2 {
+      font-size: 1.8rem;
+      color: $primary-color;
+    }
+
+    .actions {
+      .btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: $border-radius;
+        background-color: $secondary-color;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: darken($secondary-color, 10%);
+        }
+      }
+    }
   }
 
   .card {
-    background:#fff;
-    border-radius:10px;
-    padding:14px;
-    box-shadow:0 6px 18px rgba(15,23,42,0.04);
-    margin-bottom:14px;
+    background-color: white;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
-  .filters{ display:flex; gap:10px; margin-bottom:12px }
-  .filters input{ padding:8px; flex:1; border-radius:6px; border:1px solid #e6eef8 }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 
-  .table-wrap{ overflow:auto }
-  table{ width:100%; border-collapse:separate; border-spacing:0 8px }
-  th, td{ text-align:left; padding:10px 12px }
-  thead th{ color:#334155; font-weight:700; font-size:0.95rem }
-  tbody tr{ background:#fbfdff; border-radius:8px }
-  tbody tr td{ border: none }
-  .no-data{ text-align:center; color:#94a3b8 }
+    input {
+      padding: 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: $border-radius;
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 150px;
 
-  .loading{ padding:24px; text-align:center; color:#64748b }
+      &:focus {
+        border-color: $secondary-color;
+        outline: none;
+      }
+    }
 
-  .pagination{ display:flex; justify-content:center; gap:12px; align-items:center }
-  .pagination button{ padding:8px 12px; border-radius:6px; border:1px solid #d1d5db; background:#fff }
+    .search-btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: $border-radius;
+      background-color: $secondary-color;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      max-width: 200px;
 
-  .add-form{ padding:14px }
-  .add-form .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:10px; margin-bottom:12px }
-  .add-form input{ padding:8px; border:1px solid #e6eef8; border-radius:6px }
-  .btn{ padding:8px 14px; border-radius:8px; border:none; cursor:pointer }
-  .btn.primary{ background:#2563eb; color:#fff }
-  .btn.success{ background:#16a34a; color:#fff }
-  .btn.danger{ background:#ef4444; color:#fff }
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
 
-  tbody tr input{ width:100%; padding:6px; border-radius:6px; border:1px solid #e6eef8 }
-  .row-actions{ display:flex; gap:8px; align-items:center }
+  .table-wrap {
+    position: relative;
+    overflow-x: auto;
 
-  .field-error{ color:#b91c1c; font-size:0.85rem; margin-top:6px }
-  input.error{ border-color:#ef4444 }
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      color: $text-color;
+      z-index: 10;
+    }
 
-  /* Modal */
-  .modal-backdrop{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); z-index:2000 }
-  .modal{ background:#fff; padding:18px; border-radius:10px; width:420px; max-width:90%; box-shadow:0 12px 30px rgba(2,6,23,0.15) }
-  .modal h3{ margin:0 0 8px }
-  .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:14px }
+    table {
+      width: 100%;
+      border-collapse: collapse;
 
-  @media (max-width:800px){
-    .page-header{ flex-direction:column; align-items:flex-start }
+      th, td {
+        padding: 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      th {
+        background-color: $primary-color;
+        color: white;
+        font-weight: 600;
+      }
+
+      td {
+        font-size: 0.9rem;
+        color: $text-color;
+      }
+
+      .row-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+
+        .btn {
+          padding: 0.5rem 1rem;
+          border: none;
+          border-radius: $border-radius;
+          cursor: pointer;
+          font-size: 0.85rem;
+          transition: background-color 0.2s ease;
+
+          &.success {
+            background-color: $success-color;
+            color: white;
+
+            &:hover {
+              background-color: darken($success-color, 10%);
+            }
+          }
+
+          &.danger {
+            background-color: $danger-color;
+            color: white;
+
+            &:hover {
+              background-color: darken($danger-color, 10%);
+            }
+          }
+
+          &:not(.success):not(.danger) {
+            background-color: #ecf0f1;
+            color: $text-color;
+
+            &:hover {
+              background-color: #dfe4ea;
+            }
+          }
+        }
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 2rem;
+        color: #777;
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: $border-radius;
+      background-color: $secondary-color;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: $text-color;
+    }
+  }
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .popup-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: $border-radius;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+
+    &.active {
+      transform: scale(1);
+    }
+
+    h3 {
+      margin: 0 0 1rem;
+      color: $primary-color;
+      font-size: 1.3rem;
+    }
+
+    .popup-body {
+      margin: 1rem 0;
+
+      .field {
+        margin-bottom: 1rem;
+
+        label {
+          display: block;
+          font-size: 0.9rem;
+          color: $text-color;
+          margin-bottom: 0.3rem;
+          font-weight: 500;
+        }
+
+        input {
+          width: 100%;
+          padding: 0.6rem;
+          border: 1px solid #e0e0e0;
+          border-radius: $border-radius;
+          font-size: 0.9rem;
+
+          &.error {
+            border-color: $danger-color;
+          }
+
+          &:focus {
+            border-color: $secondary-color;
+            outline: none;
+          }
+        }
+
+        .field-error {
+          color: $danger-color;
+          font-size: 0.8rem;
+          margin-top: 0.2rem;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: $text-color;
+        }
+      }
+    }
+
+    .popup-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease;
+
+        &.danger {
+          background-color: $danger-color;
+          color: white;
+
+          &:hover {
+            background-color: darken($danger-color, 10%);
+          }
+        }
+
+        &.success {
+          background-color: $success-color;
+          color: white;
+
+          &:hover {
+            background-color: darken($success-color, 10%);
+          }
+        }
+
+        &:not(.danger):not(.success) {
+          background-color: #f1f3f5;
+          color: $text-color;
+
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-management {
+    padding: 0.5rem;
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .actions {
+        width: 100%;
+        .btn {
+          width: 100%;
+        }
+      }
+    }
+
+    .filters {
+      flex-direction: column;
+
+      input, .search-btn {
+        min-width: 100%;
+      }
+    }
+
+    .table-wrap {
+      table {
+        display: block;
+        overflow-x: auto;
+
+        thead {
+          display: none;
+        }
+
+        tbody, tr {
+          display: block;
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem;
+
+          &:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: $primary-color;
+            flex: 1;
+          }
+
+          .row-actions {
+            flex: 1;
+            justify-content: flex-end;
+          }
+        }
+      }
+    }
+  }
+
+  .popup-content {
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-management {
+    .page-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .card {
+      padding: 1rem;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 0.5rem;
+
+      button {
+        width: 100%;
+      }
+    }
   }
 }

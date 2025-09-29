@@ -1,140 +1,374 @@
-.page-title {
-  margin-bottom: 1rem;
-  color: #0d47a1;
+/* Variables for consistent theming */
+$primary-color: #007bff;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$info-color: #17a2b8;
+$background-color: #f8f9fa;
+$card-bg: #ffffff;
+$text-color: #333;
+$border-radius: 8px;
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$modal-backdrop: rgba(0, 0, 0, 0.5);
+$transition: all 0.3s ease;
+
+/* Reset and base styles */
+.page.config-notifications {
+  padding: 20px;
+  background: $background-color;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: $text-color;
 }
 
-.card {
-  padding: 1.2rem;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.2rem;
-}
-
-.active-card {
-  border-left: 5px solid #2196f3;
-}
-
-.empty {
-  text-align: center;
-  color: #666;
-}
-
-.row {
-  margin: 0.25rem 0;
-}
-
-.actions,
-.editor-actions,
-.modal-actions {
+/* Header */
+.header {
   display: flex;
-  gap: 0.6rem;
   flex-wrap: wrap;
-  margin-top: 0.8rem;
-}
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
 
-.field {
-  margin: 0.6rem 0;
-  display: flex;
-  flex-direction: column;
+  .title {
+    h2 {
+      font-size: clamp(1.5rem, 5vw, 1.8rem);
+      margin: 0;
+      color: $text-color;
+    }
 
-  label {
-    font-weight: 600;
-    margin-bottom: 0.3rem;
+    .subtitle {
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      color: lighten($text-color, 20%);
+    }
   }
-}
 
-.field-error {
-  color: #d32f2f;
-  font-size: 0.85rem;
-  margin-top: 0.2rem;
-}
-
-input {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
 }
 
 /* Buttons */
 .btn {
-  padding: 0.45rem 0.9rem;
+  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: $border-radius;
   cursor: pointer;
-  background: #e0e0e0;
-  transition: 0.2s;
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 
-  &:hover {
-    opacity: 0.9;
+  &.success {
+    background: $success-color;
+    color: white;
+    &:hover { background: darken($success-color, 10%); }
   }
 
   &.primary {
-    background: #1976d2;
-    color: #fff;
-  }
-
-  &.success {
-    background: #388e3c;
-    color: #fff;
+    background: $primary-color;
+    color: white;
+    &:hover { background: darken($primary-color, 10%); }
   }
 
   &.danger {
-    background: #d32f2f;
-    color: #fff;
+    background: $danger-color;
+    color: white;
+    &:hover { background: darken($danger-color, 10%); }
   }
 
   &.small {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.8rem;
+    padding: 6px 12px;
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
   }
 }
 
-/* Table */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.5rem;
+/* Cards */
+.cards {
+  display: grid;
+  gap: 20px;
+}
 
-  th,
-  td {
-    border-bottom: 1px solid #eee;
-    padding: 8px;
-    text-align: left;
+.card {
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: 20px;
+  transition: $transition;
+
+  &.active-card {
+    border-left: 4px solid $primary-color;
   }
-}
 
-.row-actions {
-  display: flex;
-  gap: 0.4rem;
-}
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 
-.badge {
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  background: #ccc;
-  color: #333;
+    h3 {
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      margin: 0;
+    }
 
-  &.active {
-    background: #4caf50;
-    color: #fff;
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      background: $primary-color;
+      color: white;
+
+      &.active {
+        background: $success-color;
+      }
+    }
+  }
+
+  .card-body {
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      .label {
+        font-weight: 500;
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .value {
+        flex: 2;
+      }
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  &.empty-card {
+    text-align: center;
+    padding: 30px;
+
+    .empty-title {
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      font-weight: 600;
+    }
+
+    .empty-sub {
+      color: lighten($text-color, 20%);
+      margin: 10px 0;
+    }
+
+    .empty-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
   }
 }
 
 /* Modal */
 .modal-backdrop {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $modal-backdrop;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
 }
 
-.modal {
-  width: 700px;
-  max-width: 95%;
+.modal.card {
+  max-width: 90%;
+  width: 500px;
+  margin: auto;
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+
+    h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+    }
+
+    .close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: $text-color;
+      transition: $transition;
+
+      &:hover {
+        color: $danger-color;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 20px;
+
+    .editor-grid {
+      display: grid;
+      gap: 15px;
+
+      .field {
+        display: flex;
+        flex-direction: column;
+
+        label {
+          margin-bottom: 5px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+
+          input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+          }
+        }
+
+        .input {
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: $border-radius;
+          font-size: clamp(0.9rem, 2.5vw, 1rem);
+          transition: $transition;
+
+          &:focus {
+            border-color: $primary-color;
+            outline: none;
+            box-shadow: 0 0 5px rgba($primary-color, 0.3);
+          }
+        }
+
+        .field-error {
+          color: $danger-color;
+          font-size: 0.85rem;
+          margin-top: 5px;
+        }
+      }
+    }
+
+    p {
+      margin: 0 0 15px;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    justify-content: flex-end;
+  }
+}
+
+/* Table */
+table.small {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  th {
+    background: #f1f1f1;
+    font-weight: 600;
+  }
+
+  .row-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 20px;
+    color: lighten($text-color, 20%);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .header-actions {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .modal.card {
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  table.small {
+    display: block;
+    overflow-x: auto;
+
+    th, td {
+      min-width: 120px;
+    }
+
+    .row-actions {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .card .card-body .row {
+    flex-direction: column;
+
+    .label, .value {
+      flex: auto;
+    }
+  }
+
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

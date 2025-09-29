@@ -39,7 +39,7 @@ export class EmployeeService {
       params = params.set('ten', ten);
     }
     if (soDienThoai) {
-      params = params.set('soDienThoai', soDienThoai);
+      params = params.set('sdt', soDienThoai);
     }
 
     const token = this.auth.getToken();

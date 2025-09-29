@@ -156,10 +156,44 @@ export class UsersManagementComponent implements OnInit {
   }
 
   deleteItem(id: string) {
+    // keep existing direct delete for backward compatibility
     if (!confirm('Xóa user này?')) return;
     this.usersService.delete(id).subscribe({
       next: () => this.load(),
       error: (err) => {
+        if (err && err.status === 403) {
+          this.toast.show('Bạn không có quyền xóa user này (403).', 'error');
+          return;
+        }
+        console.error('Delete failed', err);
+      },
+    });
+  }
+
+  // New modal-based confirmation state and handlers
+  deleteConfirmId: string | null = null;
+  showDeleteConfirm = false;
+
+  openDeleteConfirm(id: string) {
+    this.deleteConfirmId = id;
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteConfirm() {
+    this.deleteConfirmId = null;
+    this.showDeleteConfirm = false;
+  }
+
+  performDeleteConfirmed() {
+    const id = this.deleteConfirmId;
+    if (!id) return;
+    this.usersService.delete(id).subscribe({
+      next: () => {
+        this.cancelDeleteConfirm();
+        this.load();
+      },
+      error: (err) => {
+        this.cancelDeleteConfirm();
         if (err && err.status === 403) {
           this.toast.show('Bạn không có quyền xóa user này (403).', 'error');
           return;

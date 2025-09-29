@@ -1,11 +1,8 @@
 <div class="employee-management">
   <div class="page-header">
-    <div>
-      <h2>Quản lý nhân viên</h2>
-      
-    </div>
+    <h2>Quản lý nhân viên</h2>
     <div class="actions">
-      <button class="btn primary" (click)="onSearch()">Tìm kiếm</button>
+      <button class="btn primary" (click)="openAddPopup()">Thêm nhân viên</button>
     </div>
   </div>
 
@@ -13,6 +10,7 @@
     <div class="filters">
       <input type="text" [(ngModel)]="searchTen" placeholder="Tìm theo tên">
       <input type="text" [(ngModel)]="searchSoDienThoai" placeholder="Tìm theo số điện thoại">
+      <button class="search-btn" (click)="onSearch()">Tìm kiếm</button>
     </div>
 
     <div class="table-wrap">
@@ -25,68 +23,23 @@
             <th>SĐT</th>
             <th>Địa chỉ</th>
             <th>Ngày vào làm</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let emp of employees">
-            <td>
-              <ng-container *ngIf="editingId !== emp.id; else editName">{{ emp.ten }}</ng-container>
-              <ng-template #editName>
-                <div>
-                  <input [(ngModel)]="editModel!.ten" [class.error]="editFormErrors['ten']" />
-                  <div *ngIf="editFormErrors['ten']" class="field-error">{{ editFormErrors['ten'] }}</div>
-                </div>
-              </ng-template>
-            </td>
-            <td>
-              <ng-container *ngIf="editingId !== emp.id; else editEmail">{{ emp.email }}</ng-container>
-              <ng-template #editEmail>
-                <div>
-                  <input [(ngModel)]="editModel!.email" [class.error]="editFormErrors['email']" />
-                  <div *ngIf="editFormErrors['email']" class="field-error">{{ editFormErrors['email'] }}</div>
-                </div>
-              </ng-template>
-            </td>
-            <td>
-              <ng-container *ngIf="editingId !== emp.id; else editPhone">{{ emp.soDienThoai }}</ng-container>
-              <ng-template #editPhone>
-                <div>
-                  <input [(ngModel)]="editModel!.soDienThoai" [class.error]="editFormErrors['soDienThoai']" />
-                  <div *ngIf="editFormErrors['soDienThoai']" class="field-error">{{ editFormErrors['soDienThoai'] }}</div>
-                </div>
-              </ng-template>
-            </td>
-            <td>
-              <ng-container *ngIf="editingId !== emp.id; else editAddr">{{ emp.diaChi }}</ng-container>
-              <ng-template #editAddr>
-                <div>
-                  <input [(ngModel)]="editModel!.diaChi" [class.error]="editFormErrors['diaChi']" />
-                  <div *ngIf="editFormErrors['diaChi']" class="field-error">{{ editFormErrors['diaChi'] }}</div>
-                </div>
-              </ng-template>
-            </td>
-            <td>
-              <ng-container *ngIf="editingId !== emp.id; else editDate">{{ emp.ngayVaoLam | vnDate:'yyyy-MM-dd' }}</ng-container>
-              <ng-template #editDate>
-                <div>
-                  <input type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']" />
-                  <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
-                </div>
-              </ng-template>
-            </td>
+            <td data-label="Tên">{{ emp.ten }}</td>
+            <td data-label="Email">{{ emp.email }}</td>
+            <td data-label="SĐT">{{ emp.soDienThoai }}</td>
+            <td data-label="Địa chỉ">{{ emp.diaChi }}</td>
+            <td data-label="Ngày vào làm">{{ emp.ngayVaoLam | vnDate:'yyyy-MM-dd' }}</td>
             <td class="row-actions">
-              <ng-container *ngIf="editingId !== emp.id">
-                <button class="btn" (click)="startEdit(emp)">Sửa</button>
-                <button class="btn danger" (click)="openConfirmDelete(emp.id)">Xóa</button>
-              </ng-container>
-              <ng-container *ngIf="editingId === emp.id">
-                <button class="btn success" (click)="saveEdit()">Lưu</button>
-                <button class="btn" (click)="cancelEdit()">Hủy</button>
-              </ng-container>
+              <button class="btn" (click)="openEditPopup(emp)">Sửa</button>
+              <button class="btn danger" (click)="openDeletePopup(emp.id)">Xóa</button>
             </td>
           </tr>
           <tr *ngIf="employees.length === 0">
-            <td colspan="5" class="no-data">Không có dữ liệu</td>
+            <td colspan="6" class="no-data">Không có dữ liệu</td>
           </tr>
         </tbody>
       </table>
@@ -99,42 +52,77 @@
     </div>
   </div>
 
-  <div class="card add-form">
-    <h3>Thêm nhân viên mới</h3>
-    <div class="grid">
-      <div class="field">
-        <input [(ngModel)]="newEmployee.ten" placeholder="Tên" [class.error]="addFormErrors['ten']">
-        <div *ngIf="addFormErrors['ten']" class="field-error">{{ addFormErrors['ten'] }}</div>
+  <!-- Add/Edit/Delete Popup -->
+  <div class="popup-overlay" [class.active]="popupType">
+    <div class="popup-content" [class.active]="popupType">
+      <h3>{{ popupTitle }}</h3>
+      <div class="popup-body">
+        <ng-container [ngSwitch]="popupType">
+          <ng-container *ngSwitchCase="'add'">
+            <div class="field">
+              <label for="add-ten">Tên</label>
+              <input id="add-ten" [(ngModel)]="newEmployee.ten" [class.error]="addFormErrors['ten']">
+              <div *ngIf="addFormErrors['ten']" class="field-error">{{ addFormErrors['ten'] }}</div>
+            </div>
+            <div class="field">
+              <label for="add-email">Email</label>
+              <input id="add-email" [(ngModel)]="newEmployee.email" [class.error]="addFormErrors['email']">
+              <div *ngIf="addFormErrors['email']" class="field-error">{{ addFormErrors['email'] }}</div>
+            </div>
+            <div class="field">
+              <label for="add-soDienThoai">Số điện thoại</label>
+              <input id="add-soDienThoai" [(ngModel)]="newEmployee.soDienThoai" [class.error]="addFormErrors['soDienThoai']">
+              <div *ngIf="addFormErrors['soDienThoai']" class="field-error">{{ addFormErrors['soDienThoai'] }}</div>
+            </div>
+            <div class="field">
+              <label for="add-diaChi">Địa chỉ</label>
+              <input id="add-diaChi" [(ngModel)]="newEmployee.diaChi" [class.error]="addFormErrors['diaChi']">
+              <div *ngIf="addFormErrors['diaChi']" class="field-error">{{ addFormErrors['diaChi'] }}</div>
+            </div>
+            <div class="field">
+              <label for="add-ngayVaoLam">Ngày vào làm</label>
+              <input id="add-ngayVaoLam" type="date" [(ngModel)]="newEmployee.ngayVaoLam" [class.error]="addFormErrors['ngayVaoLam']">
+              <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'edit'">
+            <div class="field">
+              <label for="edit-ten">Tên</label>
+              <input id="edit-ten" [(ngModel)]="editModel!.ten" [class.error]="editFormErrors['ten']">
+              <div *ngIf="editFormErrors['ten']" class="field-error">{{ editFormErrors['ten'] }}</div>
+            </div>
+            <div class="field">
+              <label for="edit-email">Email</label>
+              <input id="edit-email" [(ngModel)]="editModel!.email" [class.error]="editFormErrors['email']">
+              <div *ngIf="editFormErrors['email']" class="field-error">{{ editFormErrors['email'] }}</div>
+            </div>
+            <div class="field">
+              <label for="edit-soDienThoai">Số điện thoại</label>
+              <input id="edit-soDienThoai" [(ngModel)]="editModel!.soDienThoai" [class.error]="editFormErrors['soDienThoai']">
+              <div *ngIf="editFormErrors['soDienThoai']" class="field-error">{{ editFormErrors['soDienThoai'] }}</div>
+            </div>
+            <div class="field">
+              <label for="edit-diaChi">Địa chỉ</label>
+              <input id="edit-diaChi" [(ngModel)]="editModel!.diaChi" [class.error]="editFormErrors['diaChi']">
+              <div *ngIf="editFormErrors['diaChi']" class="field-error">{{ editFormErrors['diaChi'] }}</div>
+            </div>
+            <div class="field">
+              <label for="edit-ngayVaoLam">Ngày vào làm</label>
+              <input id="edit-ngayVaoLam" type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']">
+              <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'delete'">
+            <p>Bạn có chắc muốn xóa nhân viên này? Hành động không thể hoàn tác.</p>
+          </ng-container>
+        </ng-container>
       </div>
-      <div class="field">
-        <input [(ngModel)]="newEmployee.email" placeholder="Email" [class.error]="addFormErrors['email']">
-        <div *ngIf="addFormErrors['email']" class="field-error">{{ addFormErrors['email'] }}</div>
+      <div class="popup-actions">
+        <button class="btn" (click)="closePopup()">Hủy</button>
+        <button *ngIf="popupType === 'add'" class="btn success" (click)="addEmployee()">Thêm</button>
+        <button *ngIf="popupType === 'edit'" class="btn success" (click)="saveEdit()">Lưu</button>
+        <button *ngIf="popupType === 'delete'" class="btn danger" (click)="confirmDelete()">Xóa</button>
       </div>
-      <div class="field">
-        <input [(ngModel)]="newEmployee.soDienThoai" placeholder="Số điện thoại" [class.error]="addFormErrors['soDienThoai']">
-        <div *ngIf="addFormErrors['soDienThoai']" class="field-error">{{ addFormErrors['soDienThoai'] }}</div>
-      </div>
-      <div class="field">
-        <input [(ngModel)]="newEmployee.diaChi" placeholder="Địa chỉ" [class.error]="addFormErrors['diaChi']">
-        <div *ngIf="addFormErrors['diaChi']" class="field-error">{{ addFormErrors['diaChi'] }}</div>
-      </div>
-      <div class="field">
-        <input [(ngModel)]="newEmployee.ngayVaoLam" type="date" placeholder="Ngày vào làm" [class.error]="addFormErrors['ngayVaoLam']">
-        <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
-      </div>
-    </div>
-    <button class="btn success" (click)="addEmployee()">Thêm</button>
-  </div>
-</div>
-
-<!-- Confirmation modal -->
-<div class="modal-backdrop" *ngIf="confirmDeleteId">
-  <div class="modal">
-    <h3>Xác nhận xóa</h3>
-    <p>Bạn có chắc muốn xóa nhân viên này? Hành động không thể hoàn tác.</p>
-    <div class="modal-actions">
-      <button class="btn" (click)="cancelConfirm()">Hủy</button>
-      <button class="btn danger" (click)="confirmDelete()">Xóa</button>
     </div>
   </div>
 </div>

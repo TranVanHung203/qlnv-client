@@ -1,151 +1,323 @@
+/* Variables for consistent theming */
+$primary-color: #2563eb;
+$muted-color: #6b7280;
+$background-color: #f9fafb;
+$card-bg: #ffffff;
+$text-color: #1f2937;
+$border-radius: 10px;
+$shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+$transition: all 0.2s ease-in-out;
+$accent-color: #10b981;
+
+/* Base styles */
 .notifications-page {
-  padding: 20px;
+  padding: clamp(16px, 4vw, 24px);
+  background: $background-color;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: $text-color;
+  max-width: 100%;
+  overflow-x: hidden;
 
   h2 {
-    margin-bottom: 16px;
-    font-size: 1.4rem;
-    color: #333;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 600;
+    margin: 0 0 clamp(16px, 3vw, 20px);
+    color: $text-color;
+    text-align: left;
   }
+}
 
-  .card {
-    background: #fff;
-    padding: 14px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    margin-bottom: 16px;
-  }
+/* Filters Card */
+.filters.card {
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: clamp(16px, 3vw, 20px);
+  margin-bottom: clamp(16px, 3vw, 20px);
+  border: 1px solid #e5e7eb;
 
-  .filters {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .row {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(160px, 45%, 200px), 1fr));
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
 
     label {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      font-weight: 600;
-      font-size: 0.9rem;
+      gap: 6px;
+      font-size: clamp(0.875rem, 2.5vw, 0.95rem);
+      font-weight: 500;
+      color: $text-color;
 
       input {
-        margin-top: 4px;
-        padding: 6px 10px;
-        border: 1px solid #ddd;
+        padding: clamp(8px, 2vw, 10px);
+        border: 1px solid #d1d5db;
         border-radius: 6px;
-        font-size: 0.9rem;
-        transition: border 0.2s;
+        font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+        transition: $transition;
+        background: #fff;
+        width: 100%;
+        box-sizing: border-box;
 
         &:focus {
-          border-color: #007bff;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
           outline: none;
         }
-      }
-    }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-
-      button {
-        padding: 6px 14px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        border: none;
-        transition: all 0.2s ease;
-
-        &.primary {
-          background: #007bff;
-          color: white;
-
-          &:hover {
-            background: #0056b3;
-          }
-        }
-
-        &.muted {
-          background: transparent;
-          border: 1px solid #ccc;
-          color: #555;
-
-          &:hover {
-            background: #f8f8f8;
-          }
+        &::placeholder {
+          color: #9ca3af;
         }
       }
     }
   }
 
-  .loading {
+  .actions {
+    display: flex;
+    gap: clamp(8px, 2vw, 12px);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+/* Buttons */
+button {
+  padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+  font-weight: 500;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  &.primary {
+    background: $primary-color;
+    color: white;
+    &:hover { background: darken($primary-color, 10%); }
+    &:focus { box-shadow: 0 0 0 3px rgba($primary-color, 0.2); }
+  }
+
+  &.muted {
+    background: $muted-color;
+    color: white;
+    &:hover { background: darken($muted-color, 10%); }
+    &:focus { box-shadow: 0 0 0 3px rgba($muted-color, 0.2); }
+  }
+
+  &[disabled] {
+    background: #d1d5db;
+    color: #6b7280;
+    cursor: not-allowed;
+    &:hover { background: #d1d5db; }
+  }
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  color: $text-color;
+  padding: clamp(16px, 4vw, 24px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+/* Table */
+.notifications-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+  margin-bottom: clamp(16px, 3vw, 20px);
+
+  th, td {
+    padding: clamp(10px, 2.5vw, 12px);
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: $text-color;
+    text-transform: uppercase;
+    font-size: clamp(0.8rem, 2.3vw, 0.85rem);
+  }
+
+  tbody tr {
+    transition: $transition;
+
+    &:hover {
+      background: #f9fafb;
+    }
+  }
+
+  .empty {
     text-align: center;
+    padding: clamp(16px, 4vw, 20px);
+    color: #6b7280;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     font-style: italic;
-    color: #666;
-    margin: 20px 0;
+  }
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(8px, 2vw, 12px);
+  margin-top: clamp(12px, 2vw, 16px);
+  flex-wrap: wrap;
+  font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+
+  span {
+    color: $text-color;
+    font-weight: 500;
+  }
+
+  button {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .filters.card .row {
+    grid-template-columns: 1fr;
   }
 
   .notifications-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
 
     th, td {
-      border: 1px solid #eee;
-      padding: 10px;
-      text-align: left;
-      font-size: 0.9rem;
+      min-width: 120px;
+      padding: clamp(8px, 2vw, 10px);
     }
+  }
+}
 
-    th {
-      background: #f9f9f9;
-      font-weight: 600;
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: clamp(12px, 3vw, 16px);
+  }
+
+  .filters.card {
+    padding: clamp(12px, 2.5vw, 16px);
+
+    .actions {
+      justify-content: flex-start;
     }
+  }
 
-    tbody tr:hover {
-      background: #f5faff;
-    }
-
-    .empty {
-      text-align: center;
-      font-style: italic;
-      color: #777;
+  .notifications-table {
+    th, td {
+      font-size: clamp(0.8rem, 2.3vw, 0.85rem);
     }
   }
 
   .pagination {
-    margin-top: 14px;
-    display: flex;
-    gap: 10px;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+  }
+}
 
-    button {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      background: white;
-      cursor: pointer;
-      transition: all 0.2s;
+@media (max-width: 576px) {
+  .notifications-page h2 {
+    font-size: clamp(1.25rem, 4.5vw, 1.5rem);
+  }
 
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+  .filters.card .row label input {
+    font-size: clamp(0.8rem, 2.3vw, 0.85rem);
+  }
 
-      &:not(:disabled):hover {
-        background: #f1f1f1;
-      }
-    }
+  button {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(0.8rem, 2.3vw, 0.85rem);
+  }
 
-    span {
-      font-weight: 500;
-      color: #333;
+  .notifications-table {
+    th, td {
+      padding: clamp(6px, 1.5vw, 8px);
+      min-width: 100px;
     }
   }
+}
+
+/* Table Mobile Optimization */
+@media (max-width: 768px) {
+  .notifications-table {
+    /* make it a block so rows can stack like cards */
+    display: block;
+    width: 100%;
+    overflow: visible;
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: block;
+    }
+
+    tbody tr {
+      display: block;
+      background: #fff;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.04);
+      border: 1px solid #eef2f7;
+    }
+
+    tbody td {
+      display: block;
+      padding: 6px 0;
+      position: relative;
+      border: none;
+
+      &:before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+      }
+
+      & > * {
+        display: block;
+        font-size: 0.95rem;
+        color: #374151;
+        white-space: normal;
+      }
+    }
+
+    .empty {
+      display: block;
+      text-align: center;
+      padding: 14px 0;
+    }
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }

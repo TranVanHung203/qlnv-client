@@ -1,13 +1,14 @@
 <div class="page emails-management">
   <div class="header">
-    <div>
+    <div class="title">
       <h3>Quản lý Email thông báo</h3>
       <div class="muted">Danh sách các địa chỉ email nhận thông báo</div>
     </div>
     <div class="actions">
       <div class="search">
+      
         <input class="input" [(ngModel)]="filterEmail" placeholder="Tìm theo email" />
-        <button class="btn" (click)="load(1)">Tìm</button>
+        <button class="btn primary" (click)="load(1)">Tìm</button>
       </div>
       <button class="btn success" (click)="startEdit()">Thêm email</button>
     </div>
@@ -17,18 +18,23 @@
     <div class="table-wrap">
       <table class="small">
         <thead>
-          <tr><th>Email</th><th style="width:1%"></th></tr>
+          <tr>
+            <th>Tên</th>
+            <th>Email</th>
+            <th style="width:1%"></th>
+          </tr>
         </thead>
         <tbody>
           <tr *ngFor="let e of items">
-            <td class="email-cell">{{ e.email }}</td>
-            <td class="nowrap actions-cell">
-              <button class="btn" title="Sửa" (click)="startEdit(e)">Sửa</button>
+            <td class="name-cell" data-label="Tên">{{ e.name }}</td>
+            <td class="email-cell" data-label="Email">{{ e.email }}</td>
+            <td class="nowrap actions-cell" data-label="Hành động">
+              <button class="btn primary" title="Sửa" (click)="startEdit(e)">Sửa</button>
               <button class="btn danger" title="Xóa" (click)="requestDelete(e.id!)">Xóa</button>
             </td>
           </tr>
           <tr *ngIf="items.length === 0">
-            <td colspan="2" class="muted">Không có email nào.</td>
+            <td colspan="3" class="muted">Không có email nào.</td>
           </tr>
         </tbody>
       </table>
@@ -36,9 +42,9 @@
 
     <div class="pager">
       <div class="left">
-        <button class="btn" [disabled]="page <= 1" (click)="load(page - 1)">« Prev</button>
+        <button class="btn" [disabled]="page <= 1" (click)="load(page - 1)">« Trước</button>
         <span class="page-info">Trang {{ page }} / {{ totalPages }}</span>
-        <button class="btn" [disabled]="page >= totalPages" (click)="load(page + 1)">Next »</button>
+        <button class="btn" [disabled]="page >= totalPages" (click)="load(page + 1)">Tiếp »</button>
       </div>
       <div class="right">
         <label>Hiển thị</label>
@@ -51,24 +57,41 @@
     </div>
   </div>
 
-  <div class="editor card" *ngIf="editing">
-    <h4 class="editor-title">{{ editing.id ? 'Sửa email' : 'Thêm email' }}</h4>
-    <div class="field">
-      <label>Email</label>
-      <input class="input" [(ngModel)]="editing.email" />
-      <div *ngIf="editorErrors['Email']" class="field-error">{{ editorErrors['Email'] }}</div>
-      <div *ngIf="editorErrors['email']" class="field-error">{{ editorErrors['email'] }}</div>
-    </div>
-    <div class="editor-actions">
-      <button class="btn success" (click)="save()">Lưu</button>
-      <button class="btn" (click)="cancelEdit()">Hủy</button>
+  <div class="modal-backdrop" *ngIf="editing">
+    <div class="modal card">
+      <div class="modal-head">
+        <h4>{{ editing.id ? 'Sửa email' : 'Thêm email' }}</h4>
+        <button class="close" (click)="cancelEdit()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field" [class.mobile-only]="isMobile">
+          <label>Tên</label>
+          <input class="input" [(ngModel)]="editing.name" placeholder="Nhập tên" />
+          <div *ngIf="editorErrors['name']" class="field-error">{{ editorErrors['name'] }}</div>
+        </div>
+        <div class="field" [class.mobile-only]="isMobile">
+          <label>Email</label>
+          <input class="input" [(ngModel)]="editing.email" placeholder="Nhập email" />
+          <div *ngIf="editorErrors['Email']" class="field-error">{{ editorErrors['Email'] }}</div>
+          <div *ngIf="editorErrors['email']" class="field-error">{{ editorErrors['email'] }}</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn success" (click)="save()">Lưu</button>
+        <button class="btn" (click)="cancelEdit()">Hủy</button>
+      </div>
     </div>
   </div>
 
   <div class="modal-backdrop" *ngIf="confirmDeleteId">
     <div class="modal card">
-      <h4>Xác nhận xóa</h4>
-      <p>Bạn có chắc muốn xóa email này (#{{ confirmDeleteId }})?</p>
+      <div class="modal-head">
+        <h4>Xác nhận xóa</h4>
+        <button class="close" (click)="cancelDelete()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc muốn xóa email này (#{{ confirmDeleteId }})?</p>
+      </div>
       <div class="modal-actions">
         <button class="btn" (click)="cancelDelete()">Hủy</button>
         <button class="btn danger" (click)="confirmDelete()">Xóa</button>

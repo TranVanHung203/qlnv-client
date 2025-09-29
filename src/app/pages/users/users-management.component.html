@@ -24,13 +24,13 @@
       </thead>
       <tbody>
         <tr *ngFor="let u of items">
-          <td>{{ u.username }}</td>
-          <td>{{ u.email }}</td>
-          <td>{{ u.fullName }}</td>
-          <td>{{ u.role }}</td>
-          <td class="row-actions">
+          <td data-label="Username">{{ u.username }}</td>
+          <td data-label="Email">{{ u.email }}</td>
+          <td data-label="Họ tên">{{ u.fullName }}</td>
+          <td data-label="Role">{{ u.role }}</td>
+          <td class="row-actions" data-label="Hành động">
             <button class="btn success" (click)="startEdit(u)">Sửa</button>
-            <button class="btn danger" (click)="deleteItem(u.id)">Xóa</button>
+            <button class="btn danger" (click)="openDeleteConfirm(u.id)">Xóa</button>
           </td>
         </tr>
         <tr *ngIf="items.length === 0">
@@ -77,13 +77,29 @@
 
       <div class="row">
         <label>Role</label>
-        <input type="text" [(ngModel)]="editModel.role" [class.error]="editorErrors['role']" />
+        <select [(ngModel)]="editModel.role" [class.error]="editorErrors['role']">
+          <option value="">-- Chọn role --</option>
+          <option value="Admin">Admin</option>
+          <option value="Assitant">Assitant</option>
+        </select>
         <div class="field-error" *ngIf="editorErrors['role']">{{ editorErrors['role'][0] }}</div>
       </div>
 
       <div class="modal-actions">
         <button class="btn primary" (click)="save()">Lưu</button>
         <button class="btn" (click)="cancelEdit()">Hủy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div class="modal-backdrop" *ngIf="showDeleteConfirm">
+    <div class="modal">
+      <h4>⚠ Xác nhận xóa</h4>
+      <p>Bạn có chắc muốn xóa user <strong>{{ deleteConfirmId }}</strong> ?</p>
+      <div class="modal-actions">
+        <button class="btn" (click)="cancelDeleteConfirm()">Hủy</button>
+        <button class="btn danger" (click)="performDeleteConfirmed()">Xóa</button>
       </div>
     </div>
   </div>

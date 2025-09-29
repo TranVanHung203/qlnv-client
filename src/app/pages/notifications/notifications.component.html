@@ -35,10 +35,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let it of items">
-        <td>{{ it.ngayGui | vnDate:'yyyy-MM-dd HH:mm' }}</td>
-        <td>{{ it.tenNhanVien || it.nhanVienId }}</td>
-        <td>{{ it.emailNhan }}</td>
-        <td>{{ it.lyDo }}</td>
+        <td data-label="Ngày gửi">{{ it.ngayGui | vnDate:'yyyy-MM-dd HH:mm' }}</td>
+        <td data-label="Tên Nhân viên">{{ it.tenNhanVien || it.nhanVienId }}</td>
+        <td data-label="Email người nhận">{{ it.emailNhan }}</td>
+        <td data-label="Lý do">{{ it.lyDo }}</td>
       </tr>
       <tr *ngIf="items.length === 0">
         <td colspan="4" class="empty">Không có thông báo nào.</td>
