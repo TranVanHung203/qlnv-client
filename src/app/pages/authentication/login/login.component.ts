@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
@@ -19,7 +18,6 @@ export class LoginComponent implements OnInit {
   error: string | null = null;
 
   constructor(private fb: FormBuilder, private router: Router, private auth: AuthService) {
-    // initialize form with validators inside constructor to ensure fb is available
     this.form = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
@@ -28,7 +26,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // if already authenticated, redirect to home
     if (this.auth.isAuthenticated()) {
       void this.router.navigateByUrl('/home');
     }
@@ -54,7 +51,6 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.form.value;
     try {
       const res = this.auth.login(username, password);
-      // support Observable or Promise
       if (res && typeof (res as any).subscribe === 'function') {
         await firstValueFrom(res as any);
       } else {

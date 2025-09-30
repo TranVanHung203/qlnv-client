@@ -41,7 +41,7 @@ export class NotificationsService {
     if (filter?.from) params = params.set('from', filter.from);
     if (filter?.to) params = params.set('to', filter.to);
     params = params.set('page', String(filter?.page ?? 1));
-    params = params.set('pageSize', String(filter?.pageSize ?? 20));
+    params = params.set('pageSize', String(filter?.pageSize ?? 10));
 
     return this.http.get<PagedNotifications>(this.base, { ...this.authHeaders(), params }).pipe(
       catchError((err) => {

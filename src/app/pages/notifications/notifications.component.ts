@@ -22,7 +22,7 @@ export class NotificationsComponent implements OnInit {
   to?: string;
 
   page = 1;
-  pageSize = 20;
+  pageSize = 10;
   totalPages = 0;
   totalItems = 0;
 
@@ -38,7 +38,7 @@ export class NotificationsComponent implements OnInit {
       next: (p: PagedNotifications) => {
         this.items = p.items || [];
         this.page = p.page || 1;
-        this.pageSize = p.pageSize || 20;
+        this.pageSize = p.pageSize || 10;
         this.totalPages = p.totalPages || 0;
         this.totalItems = p.totalItems || 0;
         this.loading = false;

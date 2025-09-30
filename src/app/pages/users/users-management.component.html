@@ -80,7 +80,7 @@
         <select [(ngModel)]="editModel.role" [class.error]="editorErrors['role']">
           <option value="">-- Chọn role --</option>
           <option value="Admin">Admin</option>
-          <option value="Assitant">Assitant</option>
+          <option value="Assistant">Assistant</option>
         </select>
         <div class="field-error" *ngIf="editorErrors['role']">{{ editorErrors['role'][0] }}</div>
       </div>

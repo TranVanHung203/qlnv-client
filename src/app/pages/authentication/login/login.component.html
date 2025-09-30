@@ -1,8 +1,10 @@
 <div class="login-wrapper">
   <div class="login-card">
+    <!-- Logo chính giữa -->
     <div class="brand">
-      <div class="logo">QLNV</div>
-      <div class="title">Quản lý nhân viên</div>
+      <div class="logo">
+        <img src="https://atpro.com.vn/wp-content/uploads/2020/10/logo-cong-ty-1024x342-1024x342.png" alt="Logo" />
+      </div>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="login-form" novalidate>
@@ -11,13 +13,17 @@
       <label class="field">
         <span class="label">Tài khoản</span>
         <input type="text" formControlName="username" placeholder="Nhập tên đăng nhập" />
-        <small class="error" *ngIf="username?.touched && username?.invalid">Vui lòng nhập tên đăng nhập.</small>
+        <small class="error" *ngIf="username?.touched && username?.invalid">
+          Vui lòng nhập tên đăng nhập.
+        </small>
       </label>
 
       <label class="field">
         <span class="label">Mật khẩu</span>
         <input type="password" formControlName="password" placeholder="Nhập mật khẩu" />
-        <small class="error" *ngIf="password?.touched && password?.invalid">Vui lòng nhập mật khẩu.</small>
+        <small class="error" *ngIf="password?.touched && password?.invalid">
+          Vui lòng nhập mật khẩu.
+        </small>
       </label>
 
       <div class="actions">
@@ -36,6 +42,9 @@
       </button>
     </form>
 
-    <footer class="card-footer">Chào mừng đến với hệ thống quản lý</footer>
+    <!-- Footer chuyển thành chữ hệ thống -->
+    <footer class="card-footer">
+      Hệ thống Quản lý Nhân viên
+    </footer>
   </div>
 </div>
