@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { apiUrl } from '../config/api.constants';
 
 export interface LoginResponse {
@@ -271,5 +271,63 @@ export class AuthService {
   const url = apiUrl('/api/Auth/reset-password');
     const res = await this.http.post<any>(url, payload).toPromise();
     return res;
+  }
+
+  // Change password for authenticated user
+  async changePassword(payload: { 
+    userId: string; 
+    currentPassword: string; 
+    newPassword: string; 
+    confirmNewPassword: string 
+  }) {
+    const url = apiUrl('/api/User/change-password');
+    const token = this.getToken();
+    
+    if (!token) {
+      throw new Error('No authentication token found. Please login again.');
+    }
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    
+    const res = await this.http.post<any>(url, payload, { headers }).toPromise();
+    return res;
+  }
+
+  // Decode JWT token to get user information
+  private decodeToken(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
+
+  // Get current user ID from token
+  getCurrentUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    
+    const decoded = this.decodeToken(token);
+    if (!decoded) return null;
+    
+    // Common JWT claims for user ID
+    return decoded.sub || decoded.userId || decoded.id || decoded.nameid || null;
+  }
+
+  // Get current user info from token
+  getCurrentUser(): any {
+    const token = this.getToken();
+    if (!token) return null;
+    
+    return this.decodeToken(token);
   }
 }

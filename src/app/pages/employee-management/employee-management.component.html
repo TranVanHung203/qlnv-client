@@ -1,127 +1,499 @@
 <div class="employee-management">
+  <!-- Modern Header -->
   <div class="page-header">
-    <h2>Quản lý nhân viên</h2>
-    <div class="actions">
-      <button class="btn primary" (click)="openAddPopup()">Thêm nhân viên</button>
+    <div class="header-content">
+      <div class="title-section">
+        <h2>
+          <i class="icon-users"></i>
+          Quản lý nhân viên
+        </h2>
+        <p class="subtitle">Quản lý thông tin và trạng thái nhân viên</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="openAddPopup()">
+          <i class="icon-plus"></i>
+          Thêm nhân viên
+        </button>
+          <button class="btn" (click)="downloadTemplate()" title="Tải file mẫu Excel">Tải template</button>
+          <button class="btn" (click)="openImportExcel()" title="Import từ Excel">Import Excel</button>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="filters">
-      <input type="text" [(ngModel)]="searchTen" placeholder="Tìm theo tên">
-      <input type="text" [(ngModel)]="searchSoDienThoai" placeholder="Tìm theo số điện thoại">
-      <button class="search-btn" (click)="onSearch()">Tìm kiếm</button>
-    </div>
-
-    <div class="table-wrap">
-      <div class="loading" *ngIf="loading">Đang tải dữ liệu...</div>
-      <table *ngIf="!loading">
-        <thead>
-          <tr>
-            <th>Tên</th>
-            <th>Email</th>
-            <th>SĐT</th>
-            <th>Địa chỉ</th>
-            <th>Ngày vào làm</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let emp of employees">
-            <td data-label="Tên">{{ emp.ten }}</td>
-            <td data-label="Email">{{ emp.email }}</td>
-            <td data-label="SĐT">{{ emp.soDienThoai }}</td>
-            <td data-label="Địa chỉ">{{ emp.diaChi }}</td>
-            <td data-label="Ngày vào làm">{{ emp.ngayVaoLam | vnDate:'yyyy-MM-dd' }}</td>
-            <td class="row-actions">
-              <button class="btn" (click)="openEditPopup(emp)">Sửa</button>
-              <button class="btn danger" (click)="openDeletePopup(emp.id)">Xóa</button>
-            </td>
-          </tr>
-          <tr *ngIf="employees.length === 0">
-            <td colspan="6" class="no-data">Không có dữ liệu</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="pagination">
-      <button (click)="onPrevPage()" [disabled]="page === 1">Trước</button>
-      <span>Trang {{ page }} / {{ totalPages }} (Tổng: {{ totalItems }} nhân viên)</span>
-      <button (click)="onNextPage()" [disabled]="page === totalPages">Sau</button>
+  <!-- Search & Filter Section -->
+  <div class="search-section">
+    <div class="search-card">
+      <div class="search-header">
+        <h3>
+          <i class="icon-search"></i>
+          Tìm kiếm & Lọc
+        </h3>
+      </div>
+      <div class="search-filters">
+        <div class="filter-group">
+          <label>Tên nhân viên</label>
+          <div class="input-wrapper">
+            <i class="icon-user"></i>
+            <input type="text" [(ngModel)]="searchTen" placeholder="Nhập tên nhân viên...">
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Số điện thoại</label>
+          <div class="input-wrapper">
+            <i class="icon-phone"></i>
+            <input type="text" [(ngModel)]="searchSoDienThoai" placeholder="Nhập số điện thoại...">
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Trạng thái</label>
+          <div class="input-wrapper">
+            <i class="icon-filter"></i>
+            <select [(ngModel)]="searchStatus" (change)="onSearch()">
+              <option value="active">Còn làm</option>
+              <option value="inactive">Nghỉ việc</option>
+              <option value="all">Tất cả</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-search" (click)="onSearch()">
+            <i class="icon-search"></i>
+            Tìm kiếm
+          </button>
+          <button class="btn btn-reset" (click)="clearSearch()">
+            <i class="icon-refresh"></i>
+            Làm mới
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Add/Edit/Delete Popup -->
-  <div class="popup-overlay" [class.active]="popupType">
-    <div class="popup-content" [class.active]="popupType">
-      <h3>{{ popupTitle }}</h3>
-      <div class="popup-body">
+  <!-- Data Section -->
+  <div class="data-section">
+    <div class="data-header">
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ totalAllEmployees }}</span>
+          <span class="stat-label">Tổng nhân viên</span>
+        </div>
+        <div class="stat-item active">
+          <span class="stat-number">{{ totalActiveEmployees }}</span>
+          <span class="stat-label">Đang làm việc</span>
+        </div>
+        <div class="stat-item inactive">
+          <span class="stat-number">{{ totalInactiveEmployees }}</span>
+          <span class="stat-label">Nghỉ việc</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Cards -->
+    <div class="employees-container">
+      <div class="loading-state" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+      
+      <div class="employees-grid" *ngIf="!loading && employees.length > 0">
+        <div class="employee-card" *ngFor="let emp of employees" [class.inactive]="emp.isDeleted">
+          <div class="card-header">
+            <div class="employee-avatar">
+              <i class="icon-user-circle"></i>
+            </div>
+            <div class="employee-info">
+              <h4 class="employee-name">{{ emp.ten }}</h4>
+              <div class="employee-status">
+                <span class="status-badge" [class]="emp.isDeleted ? 'status-inactive' : 'status-active'">
+                  <i [class]="emp.isDeleted ? 'icon-user-x' : 'icon-user-check'"></i>
+                  {{ emp.isDeleted ? 'Nghỉ việc' : 'Đang làm' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <label><i class="icon-mail"></i> Email</label>
+                <span>{{ emp.email }}</span>
+              </div>
+              <div class="info-item">
+                <label><i class="icon-phone"></i> Điện thoại</label>
+                <span>{{ emp.soDienThoai }}</span>
+              </div>
+              <div class="info-item full-width">
+                <label><i class="icon-map-pin"></i> Địa chỉ</label>
+                <span>{{ emp.diaChi }}</span>
+              </div>
+              <div class="info-item">
+                <label><i class="icon-calendar"></i> Ngày sinh</label>
+                <span>{{ emp.ngaySinh | vnDate:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-item">
+                <label><i class="icon-briefcase"></i> Ngày vào làm</label>
+                <span>{{ emp.ngayVaoLam | vnDate:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-item full-width">
+                <label><i class="icon-check-circle"></i> Ngày chính thức</label>
+                <span>{{ emp.ngayLamViecChinhThuc ? (emp.ngayLamViecChinhThuc | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn btn-outline" (click)="openEditPopup(emp)">
+              <i class="icon-edit"></i>
+              Chỉnh sửa
+            </button>
+            <button class="btn" 
+                    [class.btn-success]="emp.isDeleted" 
+                    [class.btn-warning]="!emp.isDeleted" 
+                    (click)="openToggleStatusPopup(emp)">
+              <i [class]="emp.isDeleted ? 'icon-user-plus' : 'icon-user-minus'"></i>
+              {{ emp.isDeleted ? 'Khôi phục' : 'Nghỉ việc' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="empty-state" *ngIf="!loading && employees.length === 0">
+        <div class="empty-icon">
+          <i class="icon-users"></i>
+        </div>
+        <h3>Không có nhân viên nào</h3>
+        <p>Chưa có dữ liệu nhân viên hoặc không tìm thấy kết quả phù hợp</p>
+        <button class="btn btn-primary" (click)="openAddPopup()">
+          <i class="icon-plus"></i>
+          Thêm nhân viên đầu tiên
+        </button>
+      </div>
+    </div>
+
+    <!-- Modern Pagination -->
+    <div class="pagination-section" *ngIf="!loading && employees.length > 0">
+      <div class="pagination-info">
+        <span>Hiển thị {{ employees.length }} trong tổng số {{ totalItems }} nhân viên</span>
+      </div>
+      <div class="pagination-controls">
+        <button class="btn btn-outline" (click)="onPrevPage()" [disabled]="page === 1">
+          <i class="icon-chevron-left"></i>
+          Trước
+        </button>
+        <div class="page-numbers">
+          <span class="current-page">{{ page }}</span>
+          <span class="page-separator">của</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+        <button class="btn btn-outline" (click)="onNextPage()" [disabled]="page === totalPages">
+          Sau
+          <i class="icon-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modern Modal -->
+  <div class="modal-backdrop" [class.active]="popupType" (click)="closePopup()">
+    <div class="modal" [class.active]="popupType" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <i [class]="popupType === 'add' ? 'icon-user-plus' : popupType === 'edit' ? 'icon-edit' : 'icon-alert-circle'"></i>
+          {{ popupTitle }}
+        </h3>
+        <button class="modal-close" (click)="closePopup()">
+          <i class="icon-x"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
         <ng-container [ngSwitch]="popupType">
+          <!-- Add Form -->
           <ng-container *ngSwitchCase="'add'">
-            <div class="field">
-              <label for="add-ten">Tên</label>
-              <input id="add-ten" [(ngModel)]="newEmployee.ten" [class.error]="addFormErrors['ten']">
-              <div *ngIf="addFormErrors['ten']" class="field-error">{{ addFormErrors['ten'] }}</div>
-            </div>
-            <div class="field">
-              <label for="add-email">Email</label>
-              <input id="add-email" [(ngModel)]="newEmployee.email" [class.error]="addFormErrors['email']">
-              <div *ngIf="addFormErrors['email']" class="field-error">{{ addFormErrors['email'] }}</div>
-            </div>
-            <div class="field">
-              <label for="add-soDienThoai">Số điện thoại</label>
-              <input id="add-soDienThoai" [(ngModel)]="newEmployee.soDienThoai" [class.error]="addFormErrors['soDienThoai']">
-              <div *ngIf="addFormErrors['soDienThoai']" class="field-error">{{ addFormErrors['soDienThoai'] }}</div>
-            </div>
-            <div class="field">
-              <label for="add-diaChi">Địa chỉ</label>
-              <input id="add-diaChi" [(ngModel)]="newEmployee.diaChi" [class.error]="addFormErrors['diaChi']">
-              <div *ngIf="addFormErrors['diaChi']" class="field-error">{{ addFormErrors['diaChi'] }}</div>
-            </div>
-            <div class="field">
-              <label for="add-ngayVaoLam">Ngày vào làm</label>
-              <input id="add-ngayVaoLam" type="date" [(ngModel)]="newEmployee.ngayVaoLam" [class.error]="addFormErrors['ngayVaoLam']">
-              <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="add-ten">
+                  <i class="icon-user"></i>
+                  Họ và tên *
+                </label>
+                <input id="add-ten" [(ngModel)]="newEmployee.ten" [class.error]="addFormErrors['ten']" placeholder="Nhập họ tên nhân viên">
+                <div *ngIf="addFormErrors['ten']" class="field-error">{{ addFormErrors['ten'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="add-email">
+                  <i class="icon-mail"></i>
+                  Email *
+                </label>
+                <input id="add-email" type="email" [(ngModel)]="newEmployee.email" [class.error]="addFormErrors['email']" placeholder="email@example.com">
+                <div *ngIf="addFormErrors['email']" class="field-error">{{ addFormErrors['email'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="add-soDienThoai">
+                  <i class="icon-phone"></i>
+                  Số điện thoại *
+                </label>
+                <input id="add-soDienThoai" [(ngModel)]="newEmployee.soDienThoai" [class.error]="addFormErrors['soDienThoai']" placeholder="0xxx xxx xxx">
+                <div *ngIf="addFormErrors['soDienThoai']" class="field-error">{{ addFormErrors['soDienThoai'] }}</div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="add-diaChi">
+                  <i class="icon-map-pin"></i>
+                  Địa chỉ *
+                </label>
+                <textarea id="add-diaChi" [(ngModel)]="newEmployee.diaChi" [class.error]="addFormErrors['diaChi']" 
+                          rows="3" placeholder="Nhập địa chỉ đầy đủ của nhân viên"></textarea>
+                <div *ngIf="addFormErrors['diaChi']" class="field-error">{{ addFormErrors['diaChi'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="add-ngaySinh">
+                  <i class="icon-calendar"></i>
+                  Ngày sinh *
+                </label>
+                <input id="add-ngaySinh" type="date" [(ngModel)]="newEmployee.ngaySinh" [class.error]="addFormErrors['ngaySinh']">
+                <div *ngIf="addFormErrors['ngaySinh']" class="field-error">{{ addFormErrors['ngaySinh'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="add-ngayVaoLam">
+                  <i class="icon-briefcase"></i>
+                  Ngày vào làm *
+                </label>
+                <input id="add-ngayVaoLam" type="date" [(ngModel)]="newEmployee.ngayVaoLam" [class.error]="addFormErrors['ngayVaoLam']">
+                <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="add-ngayLamViecChinhThuc">
+                  <i class="icon-check-circle"></i>
+                  Ngày làm việc chính thức
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="add-ngayLamViecChinhThuc" type="date" [(ngModel)]="newEmployee.ngayLamViecChinhThuc" [class.error]="addFormErrors['ngayLamViecChinhThuc']">
+                <div *ngIf="addFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ addFormErrors['ngayLamViecChinhThuc'] }}</div>
+              </div>
             </div>
           </ng-container>
+          
+          <!-- Edit Form -->
           <ng-container *ngSwitchCase="'edit'">
-            <div class="field">
-              <label for="edit-ten">Tên</label>
-              <input id="edit-ten" [(ngModel)]="editModel!.ten" [class.error]="editFormErrors['ten']">
-              <div *ngIf="editFormErrors['ten']" class="field-error">{{ editFormErrors['ten'] }}</div>
-            </div>
-            <div class="field">
-              <label for="edit-email">Email</label>
-              <input id="edit-email" [(ngModel)]="editModel!.email" [class.error]="editFormErrors['email']">
-              <div *ngIf="editFormErrors['email']" class="field-error">{{ editFormErrors['email'] }}</div>
-            </div>
-            <div class="field">
-              <label for="edit-soDienThoai">Số điện thoại</label>
-              <input id="edit-soDienThoai" [(ngModel)]="editModel!.soDienThoai" [class.error]="editFormErrors['soDienThoai']">
-              <div *ngIf="editFormErrors['soDienThoai']" class="field-error">{{ editFormErrors['soDienThoai'] }}</div>
-            </div>
-            <div class="field">
-              <label for="edit-diaChi">Địa chỉ</label>
-              <input id="edit-diaChi" [(ngModel)]="editModel!.diaChi" [class.error]="editFormErrors['diaChi']">
-              <div *ngIf="editFormErrors['diaChi']" class="field-error">{{ editFormErrors['diaChi'] }}</div>
-            </div>
-            <div class="field">
-              <label for="edit-ngayVaoLam">Ngày vào làm</label>
-              <input id="edit-ngayVaoLam" type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']">
-              <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="edit-ten">
+                  <i class="icon-user"></i>
+                  Họ và tên *
+                </label>
+                <input id="edit-ten" [(ngModel)]="editModel!.ten" [class.error]="editFormErrors['ten']" placeholder="Nhập họ tên nhân viên">
+                <div *ngIf="editFormErrors['ten']" class="field-error">{{ editFormErrors['ten'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-email">
+                  <i class="icon-mail"></i>
+                  Email *
+                </label>
+                <input id="edit-email" type="email" [(ngModel)]="editModel!.email" [class.error]="editFormErrors['email']" placeholder="email@example.com">
+                <div *ngIf="editFormErrors['email']" class="field-error">{{ editFormErrors['email'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-soDienThoai">
+                  <i class="icon-phone"></i>
+                  Số điện thoại *
+                </label>
+                <input id="edit-soDienThoai" [(ngModel)]="editModel!.soDienThoai" [class.error]="editFormErrors['soDienThoai']" placeholder="0xxx xxx xxx">
+                <div *ngIf="editFormErrors['soDienThoai']" class="field-error">{{ editFormErrors['soDienThoai'] }}</div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="edit-diaChi">
+                  <i class="icon-map-pin"></i>
+                  Địa chỉ *
+                </label>
+                <textarea id="edit-diaChi" [(ngModel)]="editModel!.diaChi" [class.error]="editFormErrors['diaChi']" 
+                          rows="3" placeholder="Nhập địa chỉ đầy đủ của nhân viên"></textarea>
+                <div *ngIf="editFormErrors['diaChi']" class="field-error">{{ editFormErrors['diaChi'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-ngaySinh">
+                  <i class="icon-calendar"></i>
+                  Ngày sinh *
+                </label>
+                <input id="edit-ngaySinh" type="date" [(ngModel)]="editModel!.ngaySinh" [class.error]="editFormErrors['ngaySinh']">
+                <div *ngIf="editFormErrors['ngaySinh']" class="field-error">{{ editFormErrors['ngaySinh'] }}</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-ngayVaoLam">
+                  <i class="icon-briefcase"></i>
+                  Ngày vào làm *
+                </label>
+                <input id="edit-ngayVaoLam" type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']">
+                <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="edit-ngayLamViecChinhThuc">
+                  <i class="icon-check-circle"></i>
+                  Ngày làm việc chính thức
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="edit-ngayLamViecChinhThuc" type="date" [(ngModel)]="editModel!.ngayLamViecChinhThuc" [class.error]="editFormErrors['ngayLamViecChinhThuc']">
+                <div *ngIf="editFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ editFormErrors['ngayLamViecChinhThuc'] }}</div>
+              </div>
             </div>
           </ng-container>
-          <ng-container *ngSwitchCase="'delete'">
-            <p>Bạn có chắc muốn xóa nhân viên này? Hành động không thể hoàn tác.</p>
+          
+          <!-- Import Excel -->
+          <ng-container *ngSwitchCase="'import-excel'">
+            <div class="import-excel-wrapper">
+              <div class="step">
+                <span class="step-index">1</span>
+                <div class="step-content">
+                  <p>Tải file mẫu nếu chưa có:</p>
+                  <button type="button" class="btn btn-outline btn-sm" (click)="downloadTemplate()">
+                    <i class="icon-download"></i> Tải template
+                  </button>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-index">2</span>
+                <div class="step-content">
+                  <p>Điền dữ liệu nhân viên theo đúng cột hướng dẫn trong file.</p>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-index">3</span>
+                <div class="step-content">
+                  <p>Chọn file Excel để import:</p>
+                  <div class="upload-box" [class.loading]="importLoading">
+                    <input type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" [disabled]="importLoading" />
+                    <div class="file-info" *ngIf="importFile">
+                      <i class="icon-file"></i> {{ importFile.name }}
+                      <button type="button" class="clear-file" (click)="importFile=null" [disabled]="importLoading">×</button>
+                    </div>
+                    <div class="placeholder" *ngIf="!importFile">Kéo thả hoặc chọn file .xlsx / .xls</div>
+                  </div>
+                </div>
+              </div>
+              <div class="import-hint">
+                <small><strong>Lưu ý:</strong> Các hàng trống sẽ bị bỏ qua. Vui lòng kiểm tra định dạng ngày (dd/MM/yyyy).</small>
+              </div>
+
+              <!-- Import Result Summary -->
+              <div class="import-result" *ngIf="importResult">
+                <div class="result-summary" [class.has-errors]="importResult.failedCount > 0">
+                  <div class="summary-item success">
+                    <i class="icon-check-circle"></i>
+                    <span>{{ importResult.successCount }} thành công</span>
+                  </div>
+                  <div class="summary-item error" *ngIf="importResult.failedCount > 0">
+                    <i class="icon-alert-circle"></i>
+                    <span>{{ importResult.failedCount }} thất bại</span>
+                  </div>
+                  <div class="summary-item total">
+                    <span>Tổng: {{ importResult.totalRows }} dòng</span>
+                  </div>
+                </div>
+
+                <!-- Error Details Table -->
+                <div class="error-details" *ngIf="importResult.errors && importResult.errors.length > 0">
+                  <h4><i class="icon-alert-circle"></i> Chi tiết lỗi</h4>
+                  <div class="error-table-wrapper">
+                    <table class="error-table">
+                      <thead>
+                        <tr>
+                          <th>Dòng</th>
+                          <th>Lỗi</th>
+                          <th>Dữ liệu</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let err of importResult.errors">
+                          <td class="row-number">{{ err.row }}</td>
+                          <td class="error-message">{{ err.error }}</td>
+                          <td class="error-data">{{ err.data }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="error-actions">
+                    <small>💡 Vui lòng sửa các lỗi trên và thử import lại.</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="loading-overlay" *ngIf="importLoading">
+                <div class="spinner"></div>
+                <p>Đang import dữ liệu...</p>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Confirmation -->
+          <ng-container *ngSwitchCase="'toggle-status'">
+            <div class="confirmation-content">
+              <div class="confirmation-icon" [class]="toggleStatusEmployee?.isDeleted ? 'restore' : 'deactivate'">
+                <i [class]="toggleStatusEmployee?.isDeleted ? 'icon-user-check' : 'icon-user-x'"></i>
+              </div>
+              <div class="confirmation-text">
+                <p *ngIf="toggleStatusEmployee?.isDeleted">
+                  Bạn có chắc muốn <strong>khôi phục</strong> nhân viên 
+                  <strong>{{ toggleStatusEmployee?.ten }}</strong> về trạng thái còn làm việc không?
+                </p>
+                <p *ngIf="!toggleStatusEmployee?.isDeleted">
+                  Bạn có chắc muốn chuyển nhân viên 
+                  <strong>{{ toggleStatusEmployee?.ten }}</strong> sang trạng thái <strong>nghỉ việc</strong> không?
+                </p>
+                <small>Thao tác này có thể hoàn tác được.</small>
+              </div>
+            </div>
           </ng-container>
         </ng-container>
       </div>
-      <div class="popup-actions">
-        <button class="btn" (click)="closePopup()">Hủy</button>
-        <button *ngIf="popupType === 'add'" class="btn success" (click)="addEmployee()">Thêm</button>
-        <button *ngIf="popupType === 'edit'" class="btn success" (click)="saveEdit()">Lưu</button>
-        <button *ngIf="popupType === 'delete'" class="btn danger" (click)="confirmDelete()">Xóa</button>
+      
+      <div class="modal-actions" *ngIf="popupType !== 'import-excel'">
+        <button class="btn btn-outline" (click)="closePopup()">
+          <i class="icon-x"></i>
+          Hủy bỏ
+        </button>
+        <button *ngIf="popupType === 'add'" class="btn btn-primary" (click)="addEmployee()">
+          <i class="icon-plus"></i>
+          Thêm nhân viên
+        </button>
+        <button *ngIf="popupType === 'edit'" class="btn btn-primary" (click)="saveEdit()">
+          <i class="icon-save"></i>
+          Lưu thay đổi
+        </button>
+        <button *ngIf="popupType === 'toggle-status'" 
+                class="btn" 
+                [class.btn-success]="toggleStatusEmployee?.isDeleted"
+                [class.btn-warning]="!toggleStatusEmployee?.isDeleted"
+                (click)="toggleEmployeeStatus()">
+          <i [class]="toggleStatusEmployee?.isDeleted ? 'icon-user-check' : 'icon-user-x'"></i>
+          {{ toggleStatusEmployee?.isDeleted ? 'Khôi phục' : 'Nghỉ việc' }}
+        </button>
+      </div>
+
+      <!-- Import Excel Actions -->
+      <div class="modal-actions import-excel-actions" *ngIf="popupType === 'import-excel'">
+        <button class="btn btn-outline" (click)="closePopup()" [disabled]="importLoading">
+          <i class="icon-x"></i>
+          {{ importResult ? 'Đóng' : 'Hủy' }}
+        </button>
+        <button class="btn btn-primary" (click)="importExcel()" [disabled]="importLoading || !importFile" *ngIf="!importResult">
+          <i class="icon-upload"></i>
+          <span *ngIf="!importLoading">Import ngay</span>
+          <span *ngIf="importLoading">Đang xử lý...</span>
+        </button>
+        <button class="btn btn-success" (click)="importResult = null; importFile = null" *ngIf="importResult && importResult.failedCount > 0">
+          <i class="icon-refresh"></i>
+          Thử lại
+        </button>
       </div>
     </div>
   </div>

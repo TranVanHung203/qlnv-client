@@ -21,6 +21,7 @@ export class EmployeeManagementComponent implements OnInit {
   totalItems = 0;
   searchTen = '';
   searchSoDienThoai = '';
+  searchStatus: 'all' | 'active' | 'inactive' = 'active'; // lọc trạng thái
   loading = false;
 
   newEmployee: Employee = {
@@ -28,34 +29,85 @@ export class EmployeeManagementComponent implements OnInit {
     email: '',
     soDienThoai: '',
     diaChi: '',
-    ngayVaoLam: ''
+    ngayVaoLam: '',
+    ngaySinh: '',
+    ngayLamViecChinhThuc: null,
+    isDeleted: false
   };
 
   addFormErrors: { [k: string]: string } = {};
   editFormErrors: { [k: string]: string } = {};
 
-  popupType: 'add' | 'edit' | 'delete' | '' = '';
+  popupType: 'add' | 'edit' | 'toggle-status' | 'import-excel' | '' = '';
   popupTitle: string = '';
   editingId: number | null = null;
   editModel: Employee | null = null;
-  confirmDeleteId: number | null = null;
+  toggleStatusId: number | null = null;
+  toggleStatusEmployee: Employee | null = null;
+
+  // Excel import state
+  importFile: File | null = null;
+  importLoading = false;
+  importResult: {
+    totalRows: number;
+    successCount: number;
+    failedCount: number;
+    errors: Array<{
+      row: number;
+      error: string;
+      data: string;
+    }>;
+  } | null = null;
 
   constructor(private employeeService: EmployeeService, private toast: ToastService) {}
 
   ngOnInit(): void {
+    this.loadStats();
     this.loadEmployees();
+  }
+
+  // Getter for stats
+  get activeEmployees(): number { return this.employees.filter(emp => !emp.isDeleted).length; }
+  get inactiveEmployees(): number { return this.employees.filter(emp => emp.isDeleted).length; }
+
+  // Global stats (không phụ thuộc vào trang hiện tại / filter)
+  totalAllEmployees = 0;
+  totalActiveEmployees = 0;
+  totalInactiveEmployees = 0;
+
+  loadStats(): void {
+    // Dùng pageSize=1 để lấy tổng số nhanh mà không tải nhiều dữ liệu
+    this.employeeService.getEmployees(1, 1, '', '', undefined).subscribe({
+      next: res => this.totalAllEmployees = res.totalItems
+    });
+    this.employeeService.getEmployees(1, 1, '', '', false).subscribe({
+      next: res => this.totalActiveEmployees = res.totalItems
+    });
+    this.employeeService.getEmployees(1, 1, '', '', true).subscribe({
+      next: res => this.totalInactiveEmployees = res.totalItems
+    });
+  }
+
+  clearSearch(): void {
+    this.searchTen = '';
+    this.searchSoDienThoai = '';
+    this.searchStatus = 'active';
+    this.onSearch();
   }
 
   loadEmployees(): void {
     this.loading = true;
-    this.employeeService.getEmployees(this.page, this.pageSize, this.searchTen, this.searchSoDienThoai)
+    let isDeletedParam: boolean | undefined = undefined;
+    if (this.searchStatus === 'active') isDeletedParam = false;
+    else if (this.searchStatus === 'inactive') isDeletedParam = true;
+    this.employeeService.getEmployees(this.page, this.pageSize, this.searchTen, this.searchSoDienThoai, isDeletedParam)
       .subscribe({
         next: (res) => {
           this.employees = res.items;
           this.page = res.page;
           this.pageSize = res.pageSize;
           this.totalPages = res.totalPages;
-          this.totalItems = res.totalItems;
+          this.totalItems = res.totalItems; // số lượng theo filter hiện tại
         },
         error: (err) => {
           console.error(err);
@@ -91,7 +143,7 @@ export class EmployeeManagementComponent implements OnInit {
   openAddPopup(): void {
     this.popupType = 'add';
     this.popupTitle = 'Thêm nhân viên mới';
-    this.newEmployee = { ten: '', email: '', soDienThoai: '', diaChi: '', ngayVaoLam: '' };
+    this.newEmployee = { ten: '', email: '', soDienThoai: '', diaChi: '', ngayVaoLam: '', ngaySinh: '', ngayLamViecChinhThuc: null, isDeleted: false };
     this.addFormErrors = {};
   }
 
@@ -103,18 +155,28 @@ export class EmployeeManagementComponent implements OnInit {
     this.popupType = 'edit';
     this.popupTitle = 'Sửa thông tin nhân viên';
     this.editingId = emp.id;
-    this.editModel = { ...emp };
+    this.editModel = { 
+      ...emp,
+      ngayVaoLam: this.formatDateForInput(emp.ngayVaoLam),
+      ngaySinh: this.formatDateForInput(emp.ngaySinh),
+      ngayLamViecChinhThuc: this.formatDateForInput(emp.ngayLamViecChinhThuc)
+    };
     this.editFormErrors = {};
   }
 
-  openDeletePopup(id?: number): void {
-    if (!id) {
+  openToggleStatusPopup(emp: Employee): void {
+    if (!emp.id) {
       this.toast.show('Không tìm thấy ID nhân viên', 'error');
       return;
     }
-    this.popupType = 'delete';
-    this.popupTitle = 'Xác nhận xóa';
-    this.confirmDeleteId = id;
+    this.popupType = 'toggle-status';
+    this.toggleStatusEmployee = emp;
+    this.toggleStatusId = emp.id;
+    if (emp.isDeleted) {
+      this.popupTitle = 'Khôi phục nhân viên';
+    } else {
+      this.popupTitle = 'Chuyển nhân viên nghỉ việc';
+    }
   }
 
   closePopup(): void {
@@ -122,9 +184,13 @@ export class EmployeeManagementComponent implements OnInit {
     this.popupTitle = '';
     this.editingId = null;
     this.editModel = null;
-    this.confirmDeleteId = null;
+    this.toggleStatusId = null;
+    this.toggleStatusEmployee = null;
     this.addFormErrors = {};
     this.editFormErrors = {};
+    this.importFile = null;
+    this.importLoading = false;
+    this.importResult = null;
   }
 
   addEmployee(): void {
@@ -136,10 +202,12 @@ export class EmployeeManagementComponent implements OnInit {
       return;
     }
 
-    this.employeeService.addEmployee(this.newEmployee).subscribe({
+    const employeeData = this.prepareEmployeeData(this.newEmployee);
+    this.employeeService.addEmployee(employeeData).subscribe({
       next: () => {
         this.toast.show('Thêm nhân viên thành công!', 'success');
         this.closePopup();
+        this.loadStats();
         this.loadEmployees();
       },
       error: (err) => {
@@ -166,10 +234,12 @@ export class EmployeeManagementComponent implements OnInit {
       this.toast.show('Vui lòng sửa các trường bị lỗi', 'warning');
       return;
     }
-    this.employeeService.updateEmployee(this.editingId, this.editModel).subscribe({
+    const employeeData = this.prepareEmployeeData(this.editModel);
+    this.employeeService.updateEmployee(this.editingId, employeeData).subscribe({
       next: () => {
         this.closePopup();
         this.toast.show('Cập nhật thành công', 'success');
+        this.loadStats();
         this.loadEmployees();
       },
       error: (err) => {
@@ -186,15 +256,26 @@ export class EmployeeManagementComponent implements OnInit {
     });
   }
 
-  confirmDelete(): void {
-    if (!this.confirmDeleteId) {
-      this.toast.show('Không tìm thấy ID nhân viên', 'error');
+  toggleEmployeeStatus(): void {
+    if (!this.toggleStatusId || !this.toggleStatusEmployee) {
+      this.toast.show('Không tìm thấy thông tin nhân viên', 'error');
       return;
     }
-    this.employeeService.deleteEmployee(this.confirmDeleteId).subscribe({
+
+    const isCurrentlyDeleted = this.toggleStatusEmployee.isDeleted;
+    const serviceCall = isCurrentlyDeleted 
+      ? this.employeeService.restoreEmployee(this.toggleStatusId)
+      : this.employeeService.deleteEmployee(this.toggleStatusId);
+
+    const successMessage = isCurrentlyDeleted 
+      ? 'Khôi phục nhân viên thành công' 
+      : 'Đã chuyển nhân viên sang trạng thái nghỉ việc';
+
+    serviceCall.subscribe({
       next: () => {
-        this.toast.show('Xóa nhân viên thành công', 'success');
+        this.toast.show(successMessage, 'success');
         this.closePopup();
+        this.loadStats();
         this.loadEmployees();
       },
       error: (err) => {
@@ -222,6 +303,149 @@ export class EmployeeManagementComponent implements OnInit {
       const d = new Date(emp.ngayVaoLam);
       if (isNaN(d.getTime())) errors['ngayVaoLam'] = 'Ngày vào làm không hợp lệ';
     }
+    if (!emp.ngaySinh) {
+      errors['ngaySinh'] = 'Ngày sinh không được để trống';
+    } else {
+      const d = new Date(emp.ngaySinh);
+      if (isNaN(d.getTime())) errors['ngaySinh'] = 'Ngày sinh không hợp lệ';
+    }
+    // Ngày làm việc chính thức có thể để trống
+    if (emp.ngayLamViecChinhThuc && emp.ngayLamViecChinhThuc !== '') {
+      const d = new Date(emp.ngayLamViecChinhThuc);
+      if (isNaN(d.getTime())) errors['ngayLamViecChinhThuc'] = 'Ngày làm việc chính thức không hợp lệ';
+    }
     return errors;
+  }
+
+  prepareEmployeeData(emp: Employee): Employee {
+    return {
+      ...emp,
+      ngayLamViecChinhThuc: emp.ngayLamViecChinhThuc === '' ? null : emp.ngayLamViecChinhThuc
+    };
+  }
+
+  formatDateForInput(dateStr: string | null): string {
+    if (!dateStr || dateStr === '-') return '';
+    
+    // Nếu đã là định dạng yyyy-mm-dd thì return luôn
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+    
+    // Nếu là định dạng dd/mm/yyyy thì chuyển đổi
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+      const parts = dateStr.split('/');
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    
+    // Thử parse date và format lại
+    const date = new Date(dateStr);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    return '';
+  }
+
+  // ===== Excel Template & Import =====
+  downloadTemplate(): void {
+    this.employeeService.downloadExcelTemplate().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'NhanVien_Template.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.toast.show('Tải template thành công', 'success');
+      },
+      error: (err) => {
+        this.toast.show('Lỗi tải template: ' + parseApiError(err), 'error');
+      }
+    });
+  }
+
+  openImportExcel(): void {
+    this.popupType = 'import-excel';
+    this.popupTitle = 'Import nhân viên từ Excel';
+    this.importFile = null;
+    this.importResult = null;
+  }
+
+  onFileSelected(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const allowed = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
+    ];
+    if (file.type && !allowed.includes(file.type)) {
+      this.toast.show('Chỉ chấp nhận file Excel (.xlsx, .xls)', 'error');
+      input.value = '';
+      return;
+    }
+    this.importFile = file;
+  }
+
+  importExcel(): void {
+    if (!this.importFile) {
+      this.toast.show('Vui lòng chọn file Excel', 'warning');
+      return;
+    }
+    this.importLoading = true;
+    this.importResult = null;
+    this.employeeService.importExcel(this.importFile).subscribe({
+      next: (response) => {
+        // Check if response has data property with import details
+        if (response?.data) {
+          this.importResult = {
+            totalRows: response.data.totalRows || 0,
+            successCount: response.data.successCount || 0,
+            failedCount: response.data.failedCount || 0,
+            errors: response.data.errors || []
+          };
+
+          if (this.importResult.successCount > 0 && this.importResult.failedCount === 0) {
+            this.toast.show(`Import thành công ${this.importResult.successCount} nhân viên`, 'success');
+            this.loadEmployees();
+            setTimeout(() => this.closePopup(), 2000);
+          } else if (this.importResult.successCount > 0 && this.importResult.failedCount > 0) {
+            this.toast.show(
+              `Import hoàn tất: ${this.importResult.successCount} thành công, ${this.importResult.failedCount} thất bại`,
+              'warning'
+            );
+            this.loadEmployees();
+          } else {
+            this.toast.show(
+              `Import thất bại: ${this.importResult.failedCount} lỗi. Xem chi tiết bên dưới.`,
+              'error'
+            );
+          }
+        } else {
+          // Fallback for simple success response
+          this.toast.show('Import thành công', 'success');
+          this.loadEmployees();
+          this.closePopup();
+        }
+      },
+      error: (err) => {
+        // Check if error response has structured import result
+        if (err?.error?.data) {
+          this.importResult = {
+            totalRows: err.error.data.totalRows || 0,
+            successCount: err.error.data.successCount || 0,
+            failedCount: err.error.data.failedCount || 0,
+            errors: err.error.data.errors || []
+          };
+          this.toast.show(err.error.message || 'Có lỗi trong quá trình import', 'error');
+        } else {
+          this.toast.show('Lỗi import: ' + parseApiError(err), 'error');
+        }
+      },
+      complete: () => {
+        this.importLoading = false;
+      }
+    });
   }
 }

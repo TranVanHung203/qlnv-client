@@ -50,16 +50,19 @@ export class ConfigNotificationsComponent implements OnInit {
 
   startEdit(c?: ConfigNotification) {
     if (!c) {
-      this.editing = { soNgayThongBao: 1, danhSachNamThongBao: '', excludeSaturday: false, excludeSunday: false };
+      this.editing = { 
+        soNgayThongBao: 1, 
+        danhSachNamThongBao: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', 
+        soNgayThongBaoTruoc: 365 
+      };
       return;
     }
     this.editing = { 
       id: c.id, 
       soNgayThongBao: c.soNgayThongBao, 
-      danhSachNamThongBao: c.danhSachNamThongBao, 
+      danhSachNamThongBao: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', 
       isActive: c.isActive,
-      excludeSaturday: c.excludeSaturday,
-      excludeSunday: c.excludeSunday 
+      soNgayThongBaoTruoc: c.soNgayThongBaoTruoc 
     };
     this.listOpen = false;
   }
@@ -75,12 +78,12 @@ export class ConfigNotificationsComponent implements OnInit {
     if (!Number.isInteger(this.editing.soNgayThongBao) || this.editing.soNgayThongBao < 0) {
       this.editorErrors['soNgayThongBao'] = 'Số ngày phải là số nguyên không âm';
     }
+    // Tự động set danh sách năm mặc định nếu không có
     if (!this.editing.danhSachNamThongBao || !this.editing.danhSachNamThongBao.trim()) {
-      this.editorErrors['danhSachNamThongBao'] = 'Danh sách năm không được bỏ trống';
-    } else {
-      const parts = this.editing.danhSachNamThongBao.split(',').map(s => s.trim()).filter(s => s.length);
-      const bad = parts.find(p => !/^-?\d+$/.test(p));
-      if (bad) this.editorErrors['danhSachNamThongBao'] = 'Danh sách năm phải là các số nguyên, ngăn cách bằng dấu phẩy';
+      this.editing.danhSachNamThongBao = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20';
+    }
+    if (!Number.isInteger(this.editing.soNgayThongBaoTruoc) || this.editing.soNgayThongBaoTruoc < 0) {
+      this.editorErrors['soNgayThongBaoTruoc'] = 'Số ngày thông báo trước phải là số nguyên không âm';
     }
     return Object.keys(this.editorErrors).length === 0;
   }

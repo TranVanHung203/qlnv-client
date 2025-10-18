@@ -1,50 +1,93 @@
-<div class="login-wrapper">
-  <div class="login-card">
-    <!-- Logo chính giữa -->
-    <div class="brand">
-      <div class="logo">
-        <img src="https://atpro.com.vn/wp-content/uploads/2020/10/logo-cong-ty-1024x342-1024x342.png" alt="Logo" />
+<div class="login-container">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <!-- Brand Section -->
+      <div class="brand-section">
+        <div class="logo-container">
+          <img src="https://atpro.com.vn/wp-content/uploads/2020/10/logo-cong-ty-1024x342-1024x342.png" alt="ATPro Logo" />
+        </div>
+        <div class="brand-text">
+          <h1>Hệ thống WorkPing</h1>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form" novalidate>
+        <div class="form-header">
+          <h2>Đăng nhập</h2>
+          <p>Vui lòng nhập thông tin để tiếp tục</p>
+        </div>
+
+        <div class="form-fields">
+          <div class="field-group">
+            <label for="username">
+              <i class="icon">👤</i>
+              Tài khoản
+            </label>
+            <input 
+              id="username"
+              type="text" 
+              formControlName="username" 
+              placeholder="Nhập tên đăng nhập của bạn"
+              autocomplete="username" />
+            <div class="field-error" *ngIf="username?.touched && username?.invalid">
+              <i class="error-icon">⚠️</i>
+              Vui lòng nhập tên đăng nhập
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="password">
+              <i class="icon">🔒</i>
+              Mật khẩu
+            </label>
+            <div class="password-wrapper">
+              <input 
+                id="password"
+                [type]="showPassword ? 'text' : 'password'" 
+                formControlName="password" 
+                placeholder="Nhập mật khẩu của bạn"
+                autocomplete="current-password" />
+              <button 
+                type="button" 
+                class="password-toggle"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword ? 'Ẩn mật khẩu' : 'Hiển thị mật khẩu'">
+                {{ showPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+            <div class="field-error" *ngIf="password?.touched && password?.invalid">
+              <i class="error-icon">⚠️</i>
+              Vui lòng nhập mật khẩu
+            </div>
+          </div>
+        </div>
+
+      
+
+        <div class="form-error" *ngIf="error">
+          <i class="error-icon">❌</i>
+          {{ error }}
+        </div>
+
+        <button type="submit" class="login-button" [disabled]="loading || form.invalid">
+          <span class="button-content" *ngIf="!loading">
+            <i class="login-icon">🚀</i>
+            Đăng nhập
+          </span>
+          <span class="button-content loading" *ngIf="loading">
+            <i class="loading-icon">⏳</i>
+            Đang đăng nhập...
+          </span>
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p class="copyright">
+          Copyright 2025 ©. Công ty Cổ Phần Giải Pháp Kỹ Thuật Ấn Tượng
+        </p>
       </div>
     </div>
-
-    <form [formGroup]="form" (ngSubmit)="submit()" class="login-form" novalidate>
-      <h2>Đăng nhập</h2>
-
-      <label class="field">
-        <span class="label">Tài khoản</span>
-        <input type="text" formControlName="username" placeholder="Nhập tên đăng nhập" />
-        <small class="error" *ngIf="username?.touched && username?.invalid">
-          Vui lòng nhập tên đăng nhập.
-        </small>
-      </label>
-
-      <label class="field">
-        <span class="label">Mật khẩu</span>
-        <input type="password" formControlName="password" placeholder="Nhập mật khẩu" />
-        <small class="error" *ngIf="password?.touched && password?.invalid">
-          Vui lòng nhập mật khẩu.
-        </small>
-      </label>
-
-      <div class="actions">
-        <label class="remember">
-          <input type="checkbox" formControlName="remember" />
-          <span>Ghi nhớ</span>
-        </label>
-        <a class="forgot" routerLink="/forgot-password">Quên mật khẩu?</a>
-      </div>
-
-      <div *ngIf="error" class="form-error">{{ error }}</div>
-
-      <button type="submit" class="btn-primary" [disabled]="loading">
-        <span *ngIf="!loading">Đăng nhập</span>
-        <span *ngIf="loading">Đang đăng nhập...</span>
-      </button>
-    </form>
-
-    <!-- Footer chuyển thành chữ hệ thống -->
-    <footer class="card-footer">
-      Hệ thống WorkPing
-    </footer>
   </div>
 </div>

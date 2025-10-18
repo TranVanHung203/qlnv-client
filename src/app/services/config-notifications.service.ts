@@ -10,8 +10,7 @@ export interface ConfigNotification {
   soNgayThongBao: number;
   danhSachNamThongBao: string;
   isActive?: boolean;
-  excludeSaturday: boolean;
-  excludeSunday: boolean;
+  soNgayThongBaoTruoc: number;
 }
 
 @Injectable({ providedIn: 'root' })

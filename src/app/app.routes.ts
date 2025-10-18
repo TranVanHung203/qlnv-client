@@ -11,6 +11,7 @@ import { EmailsManagementComponent } from './pages/emails-management/emails-mana
 import { HolidaysComponent } from './pages/holidays/holidays.component';
 import { UsersManagementComponent } from './pages/users/users-management.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,13 +23,14 @@ export const routes: Routes = [
       { path: '', component: EmployeeManagementComponent },
       { path: 'config', component: ConfigNotificationsComponent },
       { path: 'emails', component: EmailsManagementComponent },
-      { path: 'holidays', component: HolidaysComponent },
+      // { path: 'holidays', component: HolidaysComponent },
       { path: 'users', component: UsersManagementComponent },
-      { path: 'notifications', component: NotificationsComponent }
+      { path: 'notifications', component: NotificationsComponent },
+      { path: 'change-password', component: ChangePasswordComponent }
     ]
   },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  // { path: 'forgot-password', component: ForgotPasswordComponent },
+  // { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'logout', component: LogoutComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }

@@ -17,10 +17,21 @@
         <div class="badge">Active</div>
       </div>
       <div class="card-body">
-        <div class="row"><span class="label">Số ngày thông báo (thử việc):</span> <span class="value">{{ active.soNgayThongBao }}</span></div>
-        <div class="row"><span class="label">Danh sách năm thông báo:</span> <span class="value">{{ active.danhSachNamThongBao }}</span></div>
-        <div class="row"><span class="label">Làm việc thứ Bảy:</span> <span class="value">{{ active.excludeSaturday ? 'Không' : 'Có' }}</span></div>
-        <div class="row"><span class="label">Làm việc Chủ Nhật:</span> <span class="value">{{ active.excludeSunday ? 'Không' : 'Có' }}</span></div>
+        <div class="config-grid">
+          <div class="config-item solo">
+            <div class="config-label">Số ngày thông báo (thử việc)</div>
+            <div class="config-value">{{ active.soNgayThongBao }} ngày</div>
+          </div>
+          <div class="config-section">
+            <div class="section-title">📅 Thông báo theo năm</div>
+            <div class="section-content">
+              <div class="config-row">
+                <div class="config-label">Thông báo trước</div>
+                <div class="config-value">{{ active.soNgayThongBaoTruoc }} ngày</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="card-actions">
         <button class="btn" (click)="openList()">📖 Lịch sử</button>
@@ -49,21 +60,36 @@
       </div>
       <div class="modal-body">
         <div class="editor-grid">
-          <div class="field">
-            <label>Số ngày thông báo (thử việc)</label>
-            <input class="input" type="number" [(ngModel)]="editing.soNgayThongBao" />
-            <div *ngIf="editorErrors['soNgayThongBao']" class="field-error">{{ editorErrors['soNgayThongBao'] }}</div>
+          <!-- Thông báo thử việc -->
+          <div class="field-section">
+            <div class="section-header">
+              <h4>👤 Thông báo thử việc</h4>
+            </div>
+            <div class="field">
+              <label>Số ngày thông báo</label>
+              <div class="input-with-unit">
+                <input class="input" type="number" [(ngModel)]="editing.soNgayThongBao" min="0" />
+                <span class="unit">ngày</span>
+              </div>
+              <div *ngIf="editorErrors['soNgayThongBao']" class="field-error">{{ editorErrors['soNgayThongBao'] }}</div>
+            </div>
           </div>
-          <div class="field">
-            <label>Danh sách năm (CSV, ví dụ: 1,2,3)</label>
-            <input class="input" [(ngModel)]="editing.danhSachNamThongBao" placeholder="ví dụ: 1,2,3" />
-            <div *ngIf="editorErrors['danhSachNamThongBao']" class="field-error">{{ editorErrors['danhSachNamThongBao'] }}</div>
-          </div>
-          <div class="field">
-            <label><input type="checkbox" [(ngModel)]="editing.excludeSaturday" /> Loại trừ thứ Bảy</label>
-          </div>
-          <div class="field">
-            <label><input type="checkbox" [(ngModel)]="editing.excludeSunday" /> Loại trừ Chủ Nhật</label>
+
+          <!-- Thông báo theo năm -->
+          <div class="field-section">
+            <div class="section-header">
+              <h4>📅 Thông báo theo năm</h4>
+              <div class="section-desc">Cấu hình thông báo cho các mốc năm làm việc (1-20 năm)</div>
+            </div>
+            <div class="field">
+              <label>Thông báo trước</label>
+              <div class="input-with-unit">
+                <input class="input" type="number" [(ngModel)]="editing.soNgayThongBaoTruoc" min="0" />
+                <span class="unit">ngày</span>
+              </div>
+              <div class="field-help">Thông báo trước bao nhiêu ngày khi đến mốc năm</div>
+              <div *ngIf="editorErrors['soNgayThongBaoTruoc']" class="field-error">{{ editorErrors['soNgayThongBaoTruoc'] }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -86,31 +112,27 @@
         <table class="small">
           <thead>
             <tr>
-              <th>Số ngày</th>
-              <th>Danh sách năm</th>
-              <th>Thứ Bảy</th>
-              <th>Chủ Nhật</th>
+              <th>Số ngày TB</th>
+              <th>TB trước</th>
               <th>Trạng thái</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let c of all">
-              <td data-label="Số ngày">{{ c.soNgayThongBao }}</td>
-              <td data-label="Danh sách năm">{{ c.danhSachNamThongBao }}</td>
-              <td data-label="Thứ Bảy">{{ c.excludeSaturday ? 'Loại trừ' : 'Bao gồm' }}</td>
-              <td data-label="Chủ Nhật">{{ c.excludeSunday ? 'Loại trừ' : 'Bao gồm' }}</td>
+              <td data-label="Số ngày TB">{{ c.soNgayThongBao }} ngày</td>
+              <td data-label="TB trước">{{ c.soNgayThongBaoTruoc }} ngày</td>
               <td data-label="Trạng thái">
-                <span class="badge" [class.active]="c.isActive">{{ c.isActive ? 'Đang dùng' : '—' }}</span>
+                <span class="badge" [class.active]="c.isActive">{{ c.isActive ? 'Đang dùng' : 'Chưa dùng' }}</span>
               </td>
               <td class="row-actions">
-                <button class="btn small primary" (click)="startEdit(c)">Sửa</button>
-                <button class="btn small success" (click)="activate(c.id)">Kích hoạt</button>
-                <button *ngIf="c.id" class="btn small danger" (click)="requestDelete(c.id)">Xóa</button>
+                <button class="btn small primary" (click)="startEdit(c)">✏️ Sửa</button>
+                <button class="btn small success" (click)="activate(c.id)" *ngIf="!c.isActive">🔄 Kích hoạt</button>
+                <button *ngIf="c.id" class="btn small danger" (click)="requestDelete(c.id)">🗑️ Xóa</button>
               </td>
             </tr>
             <tr *ngIf="all.length === 0">
-              <td colspan="6" class="no-data">Không có dữ liệu</td>
+              <td colspan="4" class="no-data">Không có dữ liệu</td>
             </tr>
           </tbody>
         </table>

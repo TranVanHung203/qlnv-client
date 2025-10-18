@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
   loading = false;
   error: string | null = null;
+  showPassword = false;
 
   constructor(private fb: FormBuilder, private router: Router, private auth: AuthService) {
     this.form = this.fb.group({
@@ -37,6 +38,10 @@ export class LoginComponent implements OnInit {
 
   get password() {
     return this.form.get('password');
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   async submit() {
