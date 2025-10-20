@@ -138,6 +138,15 @@
                 <label><i class="icon-check-circle"></i> Ngày chính thức</label>
                 <span>{{ emp.ngayLamViecChinhThuc ? (emp.ngayLamViecChinhThuc | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
               </div>
+              <div class="info-item">
+                <label><i class="icon-briefcase"></i> Loại hợp đồng</label>
+                <span>
+                  <ng-container *ngIf="emp.loaiHopDong === 'vothoihan'">Vô thời hạn</ng-container>
+                  <ng-container *ngIf="emp.loaiHopDong === '1nam'">1 năm</ng-container>
+                  <ng-container *ngIf="emp.loaiHopDong === 'khac'">Khác ({{ emp.soThangHopDong }} tháng)</ng-container>
+                  <ng-container *ngIf="!emp.loaiHopDong">--</ng-container>
+                </span>
+              </div>
             </div>
           </div>
           
@@ -275,6 +284,28 @@
                 <input id="add-ngayLamViecChinhThuc" type="date" [(ngModel)]="newEmployee.ngayLamViecChinhThuc" [class.error]="addFormErrors['ngayLamViecChinhThuc']">
                 <div *ngIf="addFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ addFormErrors['ngayLamViecChinhThuc'] }}</div>
               </div>
+
+              <div class="form-group">
+                <label for="add-loaiHopDong">
+                  <i class="icon-briefcase"></i>
+                  Loại hợp đồng *
+                </label>
+                <select id="add-loaiHopDong" [(ngModel)]="newEmployee.loaiHopDong" [class.error]="addFormErrors['loaiHopDong']">
+                  <option value="vothoihan">Vô thời hạn</option>
+                  <option value="1nam">1 năm</option>
+                  <option value="khac">Khác</option>
+                </select>
+                <div *ngIf="addFormErrors['loaiHopDong']" class="field-error">{{ addFormErrors['loaiHopDong'] }}</div>
+              </div>
+
+              <div class="form-group" *ngIf="newEmployee.loaiHopDong === 'khac'">
+                <label for="add-soThangHopDong">
+                  <i class="icon-calendar"></i>
+                  Số tháng hợp đồng *
+                </label>
+                <input id="add-soThangHopDong" type="number" min="1" [(ngModel)]="newEmployee.soThangHopDong" [class.error]="addFormErrors['soThangHopDong']" placeholder="Nhập số tháng">
+                <div *ngIf="addFormErrors['soThangHopDong']" class="field-error">{{ addFormErrors['soThangHopDong'] }}</div>
+              </div>
             </div>
           </ng-container>
           
@@ -344,6 +375,28 @@
                 </label>
                 <input id="edit-ngayLamViecChinhThuc" type="date" [(ngModel)]="editModel!.ngayLamViecChinhThuc" [class.error]="editFormErrors['ngayLamViecChinhThuc']">
                 <div *ngIf="editFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ editFormErrors['ngayLamViecChinhThuc'] }}</div>
+              </div>
+
+              <div class="form-group">
+                <label for="edit-loaiHopDong">
+                  <i class="icon-briefcase"></i>
+                  Loại hợp đồng *
+                </label>
+                <select id="edit-loaiHopDong" [(ngModel)]="editModel!.loaiHopDong" [class.error]="editFormErrors['loaiHopDong']">
+                  <option value="vothoihan">Vô thời hạn</option>
+                  <option value="1nam">1 năm</option>
+                  <option value="khac">Khác</option>
+                </select>
+                <div *ngIf="editFormErrors['loaiHopDong']" class="field-error">{{ editFormErrors['loaiHopDong'] }}</div>
+              </div>
+
+              <div class="form-group" *ngIf="editModel!.loaiHopDong === 'khac'">
+                <label for="edit-soThangHopDong">
+                  <i class="icon-calendar"></i>
+                  Số tháng hợp đồng *
+                </label>
+                <input id="edit-soThangHopDong" type="number" min="1" [(ngModel)]="editModel!.soThangHopDong" [class.error]="editFormErrors['soThangHopDong']" placeholder="Nhập số tháng">
+                <div *ngIf="editFormErrors['soThangHopDong']" class="field-error">{{ editFormErrors['soThangHopDong'] }}</div>
               </div>
             </div>
           </ng-container>

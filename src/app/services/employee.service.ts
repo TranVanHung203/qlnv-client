@@ -13,6 +13,8 @@ export interface Employee {
   ngayVaoLam: string;
   ngaySinh: string;
   ngayLamViecChinhThuc: string | null;
+  loaiHopDong?: 'khac' | 'vothoihan' | '1nam';
+  soThangHopDong?: number;
   isDeleted?: boolean;
 }
 

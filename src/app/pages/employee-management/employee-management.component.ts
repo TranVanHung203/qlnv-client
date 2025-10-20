@@ -32,6 +32,8 @@ export class EmployeeManagementComponent implements OnInit {
     ngayVaoLam: '',
     ngaySinh: '',
     ngayLamViecChinhThuc: null,
+    loaiHopDong: 'vothoihan',
+    soThangHopDong: 0,
     isDeleted: false
   };
 
@@ -143,7 +145,18 @@ export class EmployeeManagementComponent implements OnInit {
   openAddPopup(): void {
     this.popupType = 'add';
     this.popupTitle = 'Thêm nhân viên mới';
-    this.newEmployee = { ten: '', email: '', soDienThoai: '', diaChi: '', ngayVaoLam: '', ngaySinh: '', ngayLamViecChinhThuc: null, isDeleted: false };
+    this.newEmployee = { 
+      ten: '', 
+      email: '', 
+      soDienThoai: '', 
+      diaChi: '', 
+      ngayVaoLam: '', 
+      ngaySinh: '', 
+      ngayLamViecChinhThuc: null, 
+      loaiHopDong: 'vothoihan',
+      soThangHopDong: 0,
+      isDeleted: false 
+    };
     this.addFormErrors = {};
   }
 
@@ -314,13 +327,24 @@ export class EmployeeManagementComponent implements OnInit {
       const d = new Date(emp.ngayLamViecChinhThuc);
       if (isNaN(d.getTime())) errors['ngayLamViecChinhThuc'] = 'Ngày làm việc chính thức không hợp lệ';
     }
+    // Loại hợp đồng
+    if (!emp.loaiHopDong) {
+      errors['loaiHopDong'] = 'Vui lòng chọn loại hợp đồng';
+    }
+    // Số tháng hợp đồng khi chọn "khác"
+    if (emp.loaiHopDong === 'khac') {
+      if (!emp.soThangHopDong || emp.soThangHopDong <= 0) {
+        errors['soThangHopDong'] = 'Số tháng hợp đồng phải lớn hơn 0';
+      }
+    }
     return errors;
   }
 
   prepareEmployeeData(emp: Employee): Employee {
     return {
       ...emp,
-      ngayLamViecChinhThuc: emp.ngayLamViecChinhThuc === '' ? null : emp.ngayLamViecChinhThuc
+      ngayLamViecChinhThuc: emp.ngayLamViecChinhThuc === '' ? null : emp.ngayLamViecChinhThuc,
+      soThangHopDong: emp.loaiHopDong === 'khac' ? emp.soThangHopDong : 0
     };
   }
 
