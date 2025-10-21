@@ -301,12 +301,13 @@ export class EmployeeManagementComponent implements OnInit {
   validateEmployee(emp: Employee): { [k: string]: string } {
     const errors: { [k: string]: string } = {};
     if (!emp.ten || !emp.ten.trim()) errors['ten'] = 'Tên không được để trống';
-    if (!emp.email || !emp.email.trim()) errors['email'] = 'Email không được để trống';
+    // Email không bắt buộc, nhưng nếu có thì phải hợp lệ
     const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    if (emp.email && !emailRegex.test(emp.email)) errors['email'] = 'Email không hợp lệ';
-    if (!emp.soDienThoai || !emp.soDienThoai.trim()) {
-      errors['soDienThoai'] = 'Số điện thoại không được để trống';
-    } else if (!/^\d{10}$/.test(emp.soDienThoai)) {
+    if (emp.email && emp.email.trim() && !emailRegex.test(emp.email)) {
+      errors['email'] = 'Email không hợp lệ';
+    }
+    // Số điện thoại không bắt buộc, nhưng nếu có thì phải đúng 10 số
+    if (emp.soDienThoai && emp.soDienThoai.trim() && !/^\d{10}$/.test(emp.soDienThoai)) {
       errors['soDienThoai'] = 'Số điện thoại phải là 10 chữ số';
     }
     if (!emp.diaChi || !emp.diaChi.trim()) errors['diaChi'] = 'Địa chỉ không được để trống';

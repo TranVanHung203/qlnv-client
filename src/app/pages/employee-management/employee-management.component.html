@@ -131,11 +131,11 @@
                 <span>{{ emp.ngaySinh | vnDate:'dd/MM/yyyy' }}</span>
               </div>
               <div class="info-item">
-                <label><i class="icon-briefcase"></i> Ngày vào làm</label>
+                <label><i class="icon-briefcase"></i> Ngày thử việc</label>
                 <span>{{ emp.ngayVaoLam | vnDate:'dd/MM/yyyy' }}</span>
               </div>
               <div class="info-item full-width">
-                <label><i class="icon-check-circle"></i> Ngày chính thức</label>
+                <label><i class="icon-check-circle"></i>Ngày kí hợp đồng chính thức</label>
                 <span>{{ emp.ngayLamViecChinhThuc ? (emp.ngayLamViecChinhThuc | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
               </div>
               <div class="info-item">
@@ -232,7 +232,7 @@
               <div class="form-group">
                 <label for="add-email">
                   <i class="icon-mail"></i>
-                  Email *
+                  Email
                 </label>
                 <input id="add-email" type="email" [(ngModel)]="newEmployee.email" [class.error]="addFormErrors['email']" placeholder="email@example.com">
                 <div *ngIf="addFormErrors['email']" class="field-error">{{ addFormErrors['email'] }}</div>
@@ -241,7 +241,7 @@
               <div class="form-group">
                 <label for="add-soDienThoai">
                   <i class="icon-phone"></i>
-                  Số điện thoại *
+                  Số điện thoại
                 </label>
                 <input id="add-soDienThoai" [(ngModel)]="newEmployee.soDienThoai" [class.error]="addFormErrors['soDienThoai']" placeholder="0xxx xxx xxx">
                 <div *ngIf="addFormErrors['soDienThoai']" class="field-error">{{ addFormErrors['soDienThoai'] }}</div>
@@ -269,7 +269,7 @@
               <div class="form-group">
                 <label for="add-ngayVaoLam">
                   <i class="icon-briefcase"></i>
-                  Ngày vào làm *
+                  Ngày thử việc *
                 </label>
                 <input id="add-ngayVaoLam" type="date" [(ngModel)]="newEmployee.ngayVaoLam" [class.error]="addFormErrors['ngayVaoLam']">
                 <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
@@ -278,7 +278,7 @@
               <div class="form-group full-width">
                 <label for="add-ngayLamViecChinhThuc">
                   <i class="icon-check-circle"></i>
-                  Ngày làm việc chính thức
+                  Ngày kí hợp đồng chính thức
                   <small>(Không bắt buộc)</small>
                 </label>
                 <input id="add-ngayLamViecChinhThuc" type="date" [(ngModel)]="newEmployee.ngayLamViecChinhThuc" [class.error]="addFormErrors['ngayLamViecChinhThuc']">
@@ -324,7 +324,7 @@
               <div class="form-group">
                 <label for="edit-email">
                   <i class="icon-mail"></i>
-                  Email *
+                  Email
                 </label>
                 <input id="edit-email" type="email" [(ngModel)]="editModel!.email" [class.error]="editFormErrors['email']" placeholder="email@example.com">
                 <div *ngIf="editFormErrors['email']" class="field-error">{{ editFormErrors['email'] }}</div>
@@ -333,7 +333,7 @@
               <div class="form-group">
                 <label for="edit-soDienThoai">
                   <i class="icon-phone"></i>
-                  Số điện thoại *
+                  Số điện thoại
                 </label>
                 <input id="edit-soDienThoai" [(ngModel)]="editModel!.soDienThoai" [class.error]="editFormErrors['soDienThoai']" placeholder="0xxx xxx xxx">
                 <div *ngIf="editFormErrors['soDienThoai']" class="field-error">{{ editFormErrors['soDienThoai'] }}</div>
@@ -361,7 +361,7 @@
               <div class="form-group">
                 <label for="edit-ngayVaoLam">
                   <i class="icon-briefcase"></i>
-                  Ngày vào làm *
+                  Ngày thử việc *
                 </label>
                 <input id="edit-ngayVaoLam" type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']">
                 <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
@@ -370,7 +370,7 @@
               <div class="form-group full-width">
                 <label for="edit-ngayLamViecChinhThuc">
                   <i class="icon-check-circle"></i>
-                  Ngày làm việc chính thức
+                  Ngày kí hợp đồng chính thức
                   <small>(Không bắt buộc)</small>
                 </label>
                 <input id="edit-ngayLamViecChinhThuc" type="date" [(ngModel)]="editModel!.ngayLamViecChinhThuc" [class.error]="editFormErrors['ngayLamViecChinhThuc']">
