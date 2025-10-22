@@ -66,9 +66,9 @@
               <h4>👤 Thông báo thử việc</h4>
             </div>
             <div class="field">
-              <label>Số ngày thông báo</label>
+              <label>Thông báo trước</label>
               <div class="input-with-unit">
-                <input class="input" type="number" [(ngModel)]="editing.soNgayThongBao" min="0" />
+                <input class="input" type="text" [(ngModel)]="editing.soNgayThongBao" />
                 <span class="unit">ngày</span>
               </div>
               <div *ngIf="editorErrors['soNgayThongBao']" class="field-error">{{ editorErrors['soNgayThongBao'] }}</div>
@@ -84,7 +84,7 @@
             <div class="field">
               <label>Thông báo trước</label>
               <div class="input-with-unit">
-                <input class="input" type="number" [(ngModel)]="editing.soNgayThongBaoTruoc" min="0" />
+                <input class="input" type="text" [(ngModel)]="editing.soNgayThongBaoTruoc" />
                 <span class="unit">ngày</span>
               </div>
               <div class="field-help">Thông báo trước bao nhiêu ngày khi đến mốc năm</div>

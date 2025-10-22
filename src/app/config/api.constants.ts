@@ -1,4 +1,5 @@
 // export const API_BASE = 'http://localhost:5282';
+// export const API_BASE = 'http://192.168.1.53:80';
 export const API_BASE = 'https://atlink.asia/workpingapi';
 export function apiUrl(path: string) {
   // ensure leading slash

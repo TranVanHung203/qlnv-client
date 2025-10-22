@@ -132,18 +132,30 @@
               </div>
               <div class="info-item">
                 <label><i class="icon-briefcase"></i> Ngày thử việc</label>
-                <span>{{ emp.ngayVaoLam | vnDate:'dd/MM/yyyy' }}</span>
+                <span>{{ emp.ngayVaoLam ? (emp.ngayVaoLam | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
               </div>
               <div class="info-item full-width">
                 <label><i class="icon-check-circle"></i>Ngày kí hợp đồng chính thức</label>
                 <span>{{ emp.ngayLamViecChinhThuc ? (emp.ngayLamViecChinhThuc | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
               </div>
               <div class="info-item">
+                <label><i class="icon-calendar"></i> Ngày kết thúc thử việc</label>
+                <span>{{ emp.ngayKetThucThuViec ? (emp.ngayKetThucThuViec | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
+              </div>
+              <div class="info-item">
+                <label><i class="icon-calendar"></i> Ngày kết thúc hợp đồng</label>
+                <span>{{ emp.ngayKetThucHopDong ? (emp.ngayKetThucHopDong | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
+              </div>
+              <div class="info-item" *ngIf="emp.isDeleted">
+                <label><i class="icon-x-circle"></i> Ngày nghỉ việc</label>
+                <span>{{ emp.ngayNghiViec ? (emp.ngayNghiViec | vnDate:'dd/MM/yyyy') : '--/--/--' }}</span>
+              </div>
+              <div class="info-item">
                 <label><i class="icon-briefcase"></i> Loại hợp đồng</label>
                 <span>
                   <ng-container *ngIf="emp.loaiHopDong === 'vothoihan'">Vô thời hạn</ng-container>
                   <ng-container *ngIf="emp.loaiHopDong === '1nam'">1 năm</ng-container>
-                  <ng-container *ngIf="emp.loaiHopDong === 'khac'">Khác ({{ emp.soThangHopDong }} tháng)</ng-container>
+                  <ng-container *ngIf="emp.loaiHopDong === 'khac'">Khác ({{ emp.soThangHopDong === 999 ? 'Vô thời hạn' : emp.soThangHopDong + ' tháng' }})</ng-container>
                   <ng-container *ngIf="!emp.loaiHopDong">--</ng-container>
                 </span>
               </div>
@@ -151,6 +163,10 @@
           </div>
           
           <div class="card-actions">
+            <button class="btn btn-outline" (click)="openContractHistory(emp)">
+              <i class="icon-file-text"></i>
+              Lịch sử HĐ
+            </button>
             <button class="btn btn-outline" (click)="openEditPopup(emp)">
               <i class="icon-edit"></i>
               Chỉnh sửa
@@ -250,7 +266,8 @@
               <div class="form-group full-width">
                 <label for="add-diaChi">
                   <i class="icon-map-pin"></i>
-                  Địa chỉ *
+                  Địa chỉ
+                  <small>(Không bắt buộc)</small>
                 </label>
                 <textarea id="add-diaChi" [(ngModel)]="newEmployee.diaChi" [class.error]="addFormErrors['diaChi']" 
                           rows="3" placeholder="Nhập địa chỉ đầy đủ của nhân viên"></textarea>
@@ -269,7 +286,8 @@
               <div class="form-group">
                 <label for="add-ngayVaoLam">
                   <i class="icon-briefcase"></i>
-                  Ngày thử việc *
+                  Ngày thử việc
+                  <small>(Không bắt buộc)</small>
                 </label>
                 <input id="add-ngayVaoLam" type="date" [(ngModel)]="newEmployee.ngayVaoLam" [class.error]="addFormErrors['ngayVaoLam']">
                 <div *ngIf="addFormErrors['ngayVaoLam']" class="field-error">{{ addFormErrors['ngayVaoLam'] }}</div>
@@ -283,6 +301,26 @@
                 </label>
                 <input id="add-ngayLamViecChinhThuc" type="date" [(ngModel)]="newEmployee.ngayLamViecChinhThuc" [class.error]="addFormErrors['ngayLamViecChinhThuc']">
                 <div *ngIf="addFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ addFormErrors['ngayLamViecChinhThuc'] }}</div>
+              </div>
+
+              <div class="form-group">
+                <label for="add-ngayKetThucThuViec">
+                  <i class="icon-calendar"></i>
+                  Ngày kết thúc thử việc
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="add-ngayKetThucThuViec" type="date" [(ngModel)]="newEmployee.ngayKetThucThuViec" [class.error]="addFormErrors['ngayKetThucThuViec']">
+                <div *ngIf="addFormErrors['ngayKetThucThuViec']" class="field-error">{{ addFormErrors['ngayKetThucThuViec'] }}</div>
+              </div>
+
+              <div class="form-group">
+                <label for="add-ngayKetThucHopDong">
+                  <i class="icon-calendar"></i>
+                  Ngày kết thúc hợp đồng
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="add-ngayKetThucHopDong" type="date" [(ngModel)]="newEmployee.ngayKetThucHopDong" [class.error]="addFormErrors['ngayKetThucHopDong']">
+                <div *ngIf="addFormErrors['ngayKetThucHopDong']" class="field-error">{{ addFormErrors['ngayKetThucHopDong'] }}</div>
               </div>
 
               <div class="form-group">
@@ -342,7 +380,8 @@
               <div class="form-group full-width">
                 <label for="edit-diaChi">
                   <i class="icon-map-pin"></i>
-                  Địa chỉ *
+                  Địa chỉ
+                  <small>(Không bắt buộc)</small>
                 </label>
                 <textarea id="edit-diaChi" [(ngModel)]="editModel!.diaChi" [class.error]="editFormErrors['diaChi']" 
                           rows="3" placeholder="Nhập địa chỉ đầy đủ của nhân viên"></textarea>
@@ -361,7 +400,8 @@
               <div class="form-group">
                 <label for="edit-ngayVaoLam">
                   <i class="icon-briefcase"></i>
-                  Ngày thử việc *
+                  Ngày thử việc
+                  <small>(Không bắt buộc)</small>
                 </label>
                 <input id="edit-ngayVaoLam" type="date" [(ngModel)]="editModel!.ngayVaoLam" [class.error]="editFormErrors['ngayVaoLam']">
                 <div *ngIf="editFormErrors['ngayVaoLam']" class="field-error">{{ editFormErrors['ngayVaoLam'] }}</div>
@@ -375,6 +415,26 @@
                 </label>
                 <input id="edit-ngayLamViecChinhThuc" type="date" [(ngModel)]="editModel!.ngayLamViecChinhThuc" [class.error]="editFormErrors['ngayLamViecChinhThuc']">
                 <div *ngIf="editFormErrors['ngayLamViecChinhThuc']" class="field-error">{{ editFormErrors['ngayLamViecChinhThuc'] }}</div>
+              </div>
+
+              <div class="form-group">
+                <label for="edit-ngayKetThucThuViec">
+                  <i class="icon-calendar"></i>
+                  Ngày kết thúc thử việc
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="edit-ngayKetThucThuViec" type="date" [(ngModel)]="editModel!.ngayKetThucThuViec" [class.error]="editFormErrors['ngayKetThucThuViec']">
+                <div *ngIf="editFormErrors['ngayKetThucThuViec']" class="field-error">{{ editFormErrors['ngayKetThucThuViec'] }}</div>
+              </div>
+
+              <div class="form-group">
+                <label for="edit-ngayKetThucHopDong">
+                  <i class="icon-calendar"></i>
+                  Ngày kết thúc hợp đồng
+                  <small>(Không bắt buộc)</small>
+                </label>
+                <input id="edit-ngayKetThucHopDong" type="date" [(ngModel)]="editModel!.ngayKetThucHopDong" [class.error]="editFormErrors['ngayKetThucHopDong']">
+                <div *ngIf="editFormErrors['ngayKetThucHopDong']" class="field-error">{{ editFormErrors['ngayKetThucHopDong'] }}</div>
               </div>
 
               <div class="form-group">
@@ -506,10 +566,62 @@
               </div>
             </div>
           </ng-container>
+
+          <ng-container *ngSwitchCase="'contract-history'">
+            <div class="contract-history-wrapper">
+              <div class="loading-wrapper" *ngIf="contractHistoryLoading">
+                <div class="loading-spinner"></div>
+                <p>Đang tải lịch sử hợp đồng...</p>
+              </div>
+
+              <div class="contract-history-list" *ngIf="!contractHistoryLoading">
+                <div class="empty-state" *ngIf="contractHistory.length === 0">
+                  <i class="icon-file-text"></i>
+                  <p>Chưa có lịch sử thay đổi hợp đồng</p>
+                </div>
+
+                <div class="timeline" *ngIf="contractHistory.length > 0">
+                  <div class="timeline-item" *ngFor="let history of contractHistory; let i = index">
+                    <div class="timeline-marker">
+                      <div class="timeline-dot"></div>
+                      <div class="timeline-line" *ngIf="i < contractHistory.length - 1"></div>
+                    </div>
+                    <div class="timeline-content">
+                      <div class="timeline-header">
+                        <div class="timeline-date">
+                          <i class="icon-calendar"></i>
+                          {{ history.ngayThayDoi | vnDate:'dd/MM/yyyy HH:mm' }}
+                        </div>
+                        <div class="timeline-badge">
+                          {{ formatContractType(history.loaiHopDong) }}
+                        </div>
+                      </div>
+                      <div class="timeline-body">
+                        <div class="contract-info">
+                          <div class="contract-detail">
+                            <span class="label">Loại hợp đồng:</span>
+                            <span class="value">{{ formatContractType(history.loaiHopDong) }}</span>
+                          </div>
+                          <div class="contract-detail">
+                            <span class="label">Số tháng:</span>
+                            <span class="value">{{ history.soThangHopDong === 999 ? 'Vô thời hạn' : history.soThangHopDong + ' tháng' }}</span>
+                          </div>
+                        </div>
+                        <div class="contract-change" *ngIf="history.ghiChu">
+                          <i class="icon-arrow-right"></i>
+                          <span>{{ formatContractNote(history.ghiChu) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
       </div>
       
-      <div class="modal-actions" *ngIf="popupType !== 'import-excel'">
+      <div class="modal-actions" *ngIf="popupType !== 'import-excel' && popupType !== 'contract-history'">
         <button class="btn btn-outline" (click)="closePopup()">
           <i class="icon-x"></i>
           Hủy bỏ
@@ -529,6 +641,13 @@
                 (click)="toggleEmployeeStatus()">
           <i [class]="toggleStatusEmployee?.isDeleted ? 'icon-user-check' : 'icon-user-x'"></i>
           {{ toggleStatusEmployee?.isDeleted ? 'Khôi phục' : 'Nghỉ việc' }}
+        </button>
+      </div>
+
+      <div class="modal-actions" *ngIf="popupType === 'contract-history'">
+        <button class="btn btn-outline" (click)="closePopup()">
+          <i class="icon-x"></i>
+          Đóng
         </button>
       </div>
 

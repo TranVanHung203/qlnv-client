@@ -51,9 +51,11 @@ export class ConfigNotificationsComponent implements OnInit {
   startEdit(c?: ConfigNotification) {
     if (!c) {
       this.editing = { 
-        soNgayThongBao: 1, 
+        soNgayThongBao: '1', 
         danhSachNamThongBao: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', 
-        soNgayThongBaoTruoc: 365 
+        soNgayThongBaoTruoc: '365',
+        excludeSaturday: false,
+        excludeSunday: false
       };
       return;
     }
@@ -62,7 +64,9 @@ export class ConfigNotificationsComponent implements OnInit {
       soNgayThongBao: c.soNgayThongBao, 
       danhSachNamThongBao: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', 
       isActive: c.isActive,
-      soNgayThongBaoTruoc: c.soNgayThongBaoTruoc 
+      soNgayThongBaoTruoc: c.soNgayThongBaoTruoc,
+      excludeSaturday: c.excludeSaturday || false,
+      excludeSunday: c.excludeSunday || false
     };
     this.listOpen = false;
   }
@@ -75,16 +79,32 @@ export class ConfigNotificationsComponent implements OnInit {
   validateEditing(): boolean {
     this.editorErrors = {};
     if (!this.editing) return false;
-    if (!Number.isInteger(this.editing.soNgayThongBao) || this.editing.soNgayThongBao < 0) {
-      this.editorErrors['soNgayThongBao'] = 'Số ngày phải là số nguyên không âm';
+    
+    // Validate soNgayThongBao
+    if (!this.editing.soNgayThongBao || !this.editing.soNgayThongBao.trim()) {
+      this.editorErrors['soNgayThongBao'] = 'Số ngày thông báo không được để trống';
+    } else {
+      const num = parseInt(this.editing.soNgayThongBao, 10);
+      if (isNaN(num) || num < 0) {
+        this.editorErrors['soNgayThongBao'] = 'Số ngày phải là số nguyên không âm';
+      }
     }
+    
     // Tự động set danh sách năm mặc định nếu không có
     if (!this.editing.danhSachNamThongBao || !this.editing.danhSachNamThongBao.trim()) {
       this.editing.danhSachNamThongBao = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20';
     }
-    if (!Number.isInteger(this.editing.soNgayThongBaoTruoc) || this.editing.soNgayThongBaoTruoc < 0) {
-      this.editorErrors['soNgayThongBaoTruoc'] = 'Số ngày thông báo trước phải là số nguyên không âm';
+    
+    // Validate soNgayThongBaoTruoc
+    if (!this.editing.soNgayThongBaoTruoc || !this.editing.soNgayThongBaoTruoc.trim()) {
+      this.editorErrors['soNgayThongBaoTruoc'] = 'Số ngày thông báo trước không được để trống';
+    } else {
+      const num = parseInt(this.editing.soNgayThongBaoTruoc, 10);
+      if (isNaN(num) || num < 0) {
+        this.editorErrors['soNgayThongBaoTruoc'] = 'Số ngày thông báo trước phải là số nguyên không âm';
+      }
     }
+    
     return Object.keys(this.editorErrors).length === 0;
   }
 

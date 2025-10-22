@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VnDatePipe } from '../../pipes/vn-date.pipe';
-import { EmployeeService, Employee } from '../../services/employee.service';
+import { EmployeeService, Employee, ContractHistory } from '../../services/employee.service';
 import { ToastService } from '../../shared/toast.service';
 import { parseApiError } from '../../utils/error-parser';
 
@@ -29,9 +29,11 @@ export class EmployeeManagementComponent implements OnInit {
     email: '',
     soDienThoai: '',
     diaChi: '',
-    ngayVaoLam: '',
+    ngayVaoLam: null,
     ngaySinh: '',
     ngayLamViecChinhThuc: null,
+    ngayKetThucThuViec: null,
+    ngayKetThucHopDong: null,
     loaiHopDong: 'vothoihan',
     soThangHopDong: 0,
     isDeleted: false
@@ -40,12 +42,17 @@ export class EmployeeManagementComponent implements OnInit {
   addFormErrors: { [k: string]: string } = {};
   editFormErrors: { [k: string]: string } = {};
 
-  popupType: 'add' | 'edit' | 'toggle-status' | 'import-excel' | '' = '';
+  popupType: 'add' | 'edit' | 'toggle-status' | 'import-excel' | 'contract-history' | '' = '';
   popupTitle: string = '';
   editingId: number | null = null;
   editModel: Employee | null = null;
   toggleStatusId: number | null = null;
   toggleStatusEmployee: Employee | null = null;
+
+  // Contract history state
+  contractHistory: ContractHistory[] = [];
+  contractHistoryEmployee: Employee | null = null;
+  contractHistoryLoading = false;
 
   // Excel import state
   importFile: File | null = null;
@@ -150,9 +157,11 @@ export class EmployeeManagementComponent implements OnInit {
       email: '', 
       soDienThoai: '', 
       diaChi: '', 
-      ngayVaoLam: '', 
+      ngayVaoLam: null, 
       ngaySinh: '', 
-      ngayLamViecChinhThuc: null, 
+      ngayLamViecChinhThuc: null,
+      ngayKetThucThuViec: null,
+      ngayKetThucHopDong: null,
       loaiHopDong: 'vothoihan',
       soThangHopDong: 0,
       isDeleted: false 
@@ -204,6 +213,59 @@ export class EmployeeManagementComponent implements OnInit {
     this.importFile = null;
     this.importLoading = false;
     this.importResult = null;
+    this.contractHistory = [];
+    this.contractHistoryEmployee = null;
+    this.contractHistoryLoading = false;
+  }
+
+  openContractHistory(emp: Employee): void {
+    if (!emp.id) {
+      this.toast.show('Không tìm thấy ID nhân viên', 'error');
+      return;
+    }
+    this.popupType = 'contract-history';
+    this.popupTitle = `Lịch sử hợp đồng - ${emp.ten}`;
+    this.contractHistoryEmployee = emp;
+    this.contractHistoryLoading = true;
+    this.contractHistory = [];
+
+    this.employeeService.getContractHistory(emp.id).subscribe({
+      next: (data) => {
+        this.contractHistory = data;
+        this.contractHistoryLoading = false;
+      },
+      error: (err) => {
+        this.toast.show('Không thể tải lịch sử hợp đồng: ' + parseApiError(err), 'error');
+        this.contractHistoryLoading = false;
+      }
+    });
+  }
+
+  formatContractType(type: string): string {
+    switch (type) {
+      case 'vothoihan': return 'Vô thời hạn';
+      case '1nam': return '1 năm';
+      case 'khac': return 'Khác';
+      default: return type;
+    }
+  }
+
+  formatContractNote(note: string): string {
+    if (!note) return '';
+    // Parse: "Thay đổi từ 1nam (12 tháng) sang khac (1 tháng)"
+    const match = note.match(/Thay đổi từ (\w+) \((\d+) tháng\) sang (\w+) \((\d+) tháng\)/);
+    if (match) {
+      const [, oldType, oldMonths, newType, newMonths] = match;
+      const oldTypeFormatted = this.formatContractType(oldType);
+      const newTypeFormatted = this.formatContractType(newType);
+      
+      // Nếu là vô thời hạn (999 tháng) thì không hiển thị phần trong ngoặc
+      const oldDisplay = oldMonths === '999' ? oldTypeFormatted : `${oldTypeFormatted} (${oldMonths} tháng)`;
+      const newDisplay = newMonths === '999' ? newTypeFormatted : `${newTypeFormatted} (${newMonths} tháng)`;
+      
+      return `${oldDisplay} → ${newDisplay}`;
+    }
+    return note;
   }
 
   addEmployee(): void {
@@ -310,10 +372,9 @@ export class EmployeeManagementComponent implements OnInit {
     if (emp.soDienThoai && emp.soDienThoai.trim() && !/^\d{10}$/.test(emp.soDienThoai)) {
       errors['soDienThoai'] = 'Số điện thoại phải là 10 chữ số';
     }
-    if (!emp.diaChi || !emp.diaChi.trim()) errors['diaChi'] = 'Địa chỉ không được để trống';
-    if (!emp.ngayVaoLam) {
-      errors['ngayVaoLam'] = 'Ngày vào làm không được để trống';
-    } else {
+    // Địa chỉ không bắt buộc
+    // Ngày vào làm có thể để trống
+    if (emp.ngayVaoLam && emp.ngayVaoLam !== '') {
       const d = new Date(emp.ngayVaoLam);
       if (isNaN(d.getTime())) errors['ngayVaoLam'] = 'Ngày vào làm không hợp lệ';
     }
@@ -327,6 +388,16 @@ export class EmployeeManagementComponent implements OnInit {
     if (emp.ngayLamViecChinhThuc && emp.ngayLamViecChinhThuc !== '') {
       const d = new Date(emp.ngayLamViecChinhThuc);
       if (isNaN(d.getTime())) errors['ngayLamViecChinhThuc'] = 'Ngày làm việc chính thức không hợp lệ';
+    }
+    // Ngày kết thúc thử việc có thể để trống
+    if (emp.ngayKetThucThuViec && emp.ngayKetThucThuViec !== '') {
+      const d = new Date(emp.ngayKetThucThuViec);
+      if (isNaN(d.getTime())) errors['ngayKetThucThuViec'] = 'Ngày kết thúc thử việc không hợp lệ';
+    }
+    // Ngày kết thúc hợp đồng có thể để trống
+    if (emp.ngayKetThucHopDong && emp.ngayKetThucHopDong !== '') {
+      const d = new Date(emp.ngayKetThucHopDong);
+      if (isNaN(d.getTime())) errors['ngayKetThucHopDong'] = 'Ngày kết thúc hợp đồng không hợp lệ';
     }
     // Loại hợp đồng
     if (!emp.loaiHopDong) {
@@ -344,7 +415,10 @@ export class EmployeeManagementComponent implements OnInit {
   prepareEmployeeData(emp: Employee): Employee {
     return {
       ...emp,
+      ngayVaoLam: emp.ngayVaoLam === '' ? null : emp.ngayVaoLam,
       ngayLamViecChinhThuc: emp.ngayLamViecChinhThuc === '' ? null : emp.ngayLamViecChinhThuc,
+      ngayKetThucThuViec: emp.ngayKetThucThuViec === '' ? null : emp.ngayKetThucThuViec,
+      ngayKetThucHopDong: emp.ngayKetThucHopDong === '' ? null : emp.ngayKetThucHopDong,
       soThangHopDong: emp.loaiHopDong === 'khac' ? emp.soThangHopDong : 0
     };
   }

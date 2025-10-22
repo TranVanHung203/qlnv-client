@@ -10,12 +10,25 @@ export interface Employee {
   email: string;
   soDienThoai: string;
   diaChi: string;
-  ngayVaoLam: string;
+  ngayVaoLam: string | null;
   ngaySinh: string;
   ngayLamViecChinhThuc: string | null;
+  ngayKetThucThuViec?: string | null;
+  ngayKetThucHopDong?: string | null;
   loaiHopDong?: 'khac' | 'vothoihan' | '1nam';
   soThangHopDong?: number;
+  ngayNghiViec?: string | null;
   isDeleted?: boolean;
+}
+
+export interface ContractHistory {
+  id: number;
+  nhanVienId: number;
+  tenNhanVien: string;
+  loaiHopDong: string;
+  soThangHopDong: number;
+  ngayThayDoi: string;
+  ghiChu: string;
 }
 
 export interface EmployeeResponse {
@@ -109,5 +122,13 @@ export class EmployeeService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(url, formData, { headers });
+  }
+
+  // Lấy lịch sử hợp đồng của nhân viên
+  getContractHistory(employeeId: number): Observable<ContractHistory[]> {
+    const url = apiUrl(`/api/lich-su-hop-dong/nhan-vien/${employeeId}`);
+    const token = this.auth.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    return this.http.get<ContractHistory[]>(url, { headers });
   }
 }

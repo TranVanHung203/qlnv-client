@@ -3,7 +3,9 @@
 $primary: #6366f1;          
 $primary-light: #8b5cf6;   
 $secondary: #06b6d4;        
-$success: #10b981;          
+$success: #10b981;
+
+@import './contract-history-styles.scss';          
 $warning: #f59e0b;          
 $danger: #ef4444;           
 $gray-50: #f9fafb;
@@ -66,6 +68,9 @@ $transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 .icon-download::before { content: '⬇️'; }
 .icon-upload::before { content: '⬆️'; }
 .icon-file::before { content: '📄'; }
+.icon-file-text::before { content: '📋'; }
+.icon-arrow-right::before { content: '→'; }
+.icon-x-circle::before { content: '⛔'; }
 .icon-filter::before { content: '🔽'; }
 
 // ===== BASE STYLES =====

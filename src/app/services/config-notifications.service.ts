@@ -7,10 +7,12 @@ import { apiUrl } from '../config/api.constants';
 
 export interface ConfigNotification {
   id?: number;
-  soNgayThongBao: number;
+  soNgayThongBao: string;
   danhSachNamThongBao: string;
   isActive?: boolean;
-  soNgayThongBaoTruoc: number;
+  excludeSaturday?: boolean;
+  excludeSunday?: boolean;
+  soNgayThongBaoTruoc: string;
 }
 
 @Injectable({ providedIn: 'root' })
